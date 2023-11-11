@@ -15,24 +15,29 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
+import com.example.sicve.login.HardCodedCredentialsAuthentication
+import com.example.sicve.login.UserAuthentication
 import com.example.sicve.ui.theme.SicveTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginComponent(name: String, modifier: Modifier = Modifier, navigationController: NavController) {
+fun LoginComponent(navigationController: NavController) {
     var username by remember {
         mutableStateOf("")
     }
     var password by remember {
         mutableStateOf("")
     }
-    var incorrectPassword by remember {
+    var loginError by remember {
         mutableStateOf(false)
     }
+    var loginErrorMessage by remember {
+        mutableStateOf("false")
+    }
+
 
     Column (
         Modifier.fillMaxSize(),
@@ -56,20 +61,25 @@ fun LoginComponent(name: String, modifier: Modifier = Modifier, navigationContro
             visualTransformation = PasswordVisualTransformation()
         )
         Button(onClick = {
-            if(true)
-                incorrectPassword = true
-            else
-               navigationController.navigate(route=ApplicationView.AdminView.route + "/$username")
+            val auth : UserAuthentication = HardCodedCredentialsAuthentication(username, password)
+            val result = auth.login()
+            if(result.contains("Success")) {
+                navigationController.navigate(route = ApplicationView.AdminView.route + "/$username")
+            }
+            else {
+                loginError = true
+                loginErrorMessage = result.entries.iterator().next().key
+
+            }
         }){
             Text(text = "login")
         }
 
-        if(incorrectPassword)
+        if(loginError)
             Text(
-                text = "The provided password is not correct",
+                text = loginErrorMessage,
                 color = Color.Red
             )
-
     }
 }
 

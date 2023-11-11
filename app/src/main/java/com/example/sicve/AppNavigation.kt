@@ -14,7 +14,7 @@ fun NavigateApp() {
         composable(
             route=ApplicationView.LoginPage.route
         ){
-            LoginComponent(name = ApplicationView.LoginPage.route, navigationController = navigationController)
+            LoginComponent(navigationController = navigationController)
         }
 
         composable(
