@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">sicve</string>
+    <string name="increment_by_one">sicve</string>
+    <string name="number_zero">sicve</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 </resources>
