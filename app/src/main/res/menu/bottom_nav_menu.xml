@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/person"
-        android:title="Person"
-        android:icon="@drawable/ic_user"/>
+        android:id="@+id/add"
+        android:title="Add"
+        android:icon="@drawable/ic_add"
+        android:color="#24A0ED"/>
     <item
-        android:id="@+id/home"
-        android:title="Home"
-        android:icon="@drawable/ic_user"/>
+        android:id="@+id/modify"
+        android:title="Modify"
+        android:icon="@drawable/ic_edit"
+        android:color="#24A0ED"/>
     <item
-        android:id="@+id/settings"
-        android:title="Settings"
-        android:icon="@drawable/ic_user"/>
+        android:id="@+id/info"
+        android:title="Info"
+        android:icon="@drawable/ic_info"
+        android:color="#24A0ED"/>
 </menu>

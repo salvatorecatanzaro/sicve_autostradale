@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login)
+        setContentView(R.layout.activity_login)
         getSupportActionBar()?.hide()
         // get reference to all views
         var username = findViewById<EditText>(R.id.username)
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         }
         buttonSubmit.setOnClickListener {
             // clearing user_name and password edit text views on reset button click
-            val intent = Intent(this, Admin::class.java)
+            val intent = Intent(this, AdminActivity::class.java)
             intent.putExtra("username", username.getText().toString())
             startActivity(intent)
         }

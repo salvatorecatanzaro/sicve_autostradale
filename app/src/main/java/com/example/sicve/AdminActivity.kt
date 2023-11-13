@@ -7,7 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 
-class Admin : AppCompatActivity() {
+class AdminActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
@@ -21,17 +21,17 @@ class Admin : AppCompatActivity() {
         toolbar.setTitle("username: $username")
 
 
-        val firstFragment = Insert()
-        val secondFragment = Modify()
-        val thirdFragment = Informations()
+        val firstFragment = InsertFragment()
+        val secondFragment = ModifyFragment()
+        val thirdFragment = InformationsFragment()
 
         selectFragment(firstFragment)
 
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){
-                R.id.home->selectFragment(firstFragment)
-                R.id.person->selectFragment(secondFragment)
-                R.id.settings->selectFragment(thirdFragment)
+                R.id.add->selectFragment(firstFragment)
+                R.id.modify->selectFragment(secondFragment)
+                R.id.info->selectFragment(thirdFragment)
 
             }
             true
