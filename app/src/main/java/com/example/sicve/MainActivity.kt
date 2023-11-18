@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         getSupportActionBar()?.hide()
         // get reference to all views
-        var username = findViewById<EditText>(R.id.username)
+        var username = findViewById<EditText>(R.id.stazione_entrata)
         var password = findViewById<EditText>(R.id.password)
         var buttonReset = findViewById<Button>(R.id.button_reset)
         var buttonSubmit = findViewById<Button>(R.id.button_submit)

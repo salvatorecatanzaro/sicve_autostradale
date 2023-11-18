@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import androidx.constraintlayout.widget.ConstraintLayout
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -34,7 +37,21 @@ class InsertFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_insert, container, false)
+        val view = inflater.inflate(R.layout.fragment_insert, container, false)
+        val addTextEdit = view.findViewById<Button>(R.id.button2)
+        addTextEdit.setOnClickListener {
+            val editText = EditText(view.context)
+            editText.setText("look at me now")
+            editText.layout(121, 31, 28, 18)
+            var constrView = view.findViewById<ConstraintLayout>(R.id.constraintlayadminid)
+            constrView.addView(editText)
+        }
+
+        return view
+    }
+
+    fun addEditTextUnder(view : View) {
+
     }
 
     companion object {

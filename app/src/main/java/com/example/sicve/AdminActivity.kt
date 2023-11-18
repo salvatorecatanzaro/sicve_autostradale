@@ -1,6 +1,7 @@
 package com.example.sicve
 
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -18,6 +19,7 @@ class AdminActivity : AppCompatActivity() {
         var username = intent.getStringExtra("username")
         var toolbar = findViewById<Toolbar>(R.id.toolbar)
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+
         toolbar.setTitle("username: $username")
 
 
