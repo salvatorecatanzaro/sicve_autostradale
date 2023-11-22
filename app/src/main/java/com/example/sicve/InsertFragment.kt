@@ -1,5 +1,7 @@
 package com.example.sicve
 
+import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,7 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import androidx.constraintlayout.widget.ConstraintLayout
+import android.widget.Switch
+import com.example.sicve.entities.Autovelox
+import com.example.sicve.entities.Computer
+import com.example.sicve.entities.HighWay
+import com.example.sicve.entities.HighwayBlock
+import com.example.sicve.entities.Tutor
+import com.example.sicve.utils.DBHelper
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -38,21 +46,75 @@ class InsertFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_insert, container, false)
-        val addTextEdit = view.findViewById<Button>(R.id.button2)
-        addTextEdit.setOnClickListener {
-            val editText = EditText(view.context)
-            editText.setText("look at me now")
-            editText.layout(121, 31, 28, 18)
-            var constrView = view.findViewById<ConstraintLayout>(R.id.constraintlayadminid)
-            constrView.addView(editText)
+        //view.context.deleteDatabase("sicve")
+        val db : DBHelper = DBHelper(view.context)
+        val dbw = db.writableDatabase
+        var values = ContentValues().apply{
+            put("NAME", "Main")
+        }
+
+        val highwayId = dbw.insert("HIGHWAY", null, values)
+        val saveButton = view.findViewById<Button>(R.id.button)
+        val stazione_entrata_et = view.findViewById<EditText>(R.id.stazione_entrata)
+        val stazione_uscita_et = view.findViewById<EditText>(R.id.stazione_uscita)
+        val tutor_attivo_sw = view.findViewById<Switch>(R.id.tutor_attivo)
+        val limite_velocita_et = view.findViewById<EditText>(R.id.limite_autovelox)
+        var limite_velocita_int = 0
+
+        saveButton.setOnClickListener {
+
+            try {
+                limite_velocita_int = limite_velocita_et.getText().toString().toInt()
+            }catch(e: Exception){
+                print("cannot cast value")
+
+            }
+            val entrata = stazione_entrata_et.text.toString()
+            val uscita = stazione_uscita_et.text.toString()
+            val cursor = dbw?.query("TUTOR", null, "STAZIONE_ENTRATA='$entrata' and STAZIONE_USCITA='$uscita'", null, null, null, null)
+            if(cursor?.count != 0){
+                cursor?.moveToNext()
+
+                DBHelper.updateTutor(
+                    dbw,
+                    stazione_entrata_et.text.toString(),
+                    tutor_attivo_sw.isChecked,
+                    limite_velocita_int
+                )
+            }
+            else{
+                // new tutor
+                DBHelper.insertTutor(
+                    dbw,
+                    stazione_entrata_et.text.toString(),
+                    stazione_uscita_et.text.toString(),
+                    tutor_attivo_sw.isChecked,
+                    limite_velocita_int
+                )
+
+
+            }
+            // Autovelox id 0 because it will not be used when inserting into the db,
+            // it is an autoincrement column
+            val autovelox : Autovelox = Autovelox(0, limite_velocita_int, Computer(-1))
+            val tutor : Tutor = Tutor(
+                tutor_attivo_sw.isChecked(),
+                mutableListOf(),
+                stazione_entrata_et.getText().toString(),
+                stazione_uscita_et.getText().toString()
+                )
         }
 
         return view
     }
 
-    fun addEditTextUnder(view : View) {
-
+    fun tutorExists(entrata: String, uscita: String, dbw: SQLiteDatabase) : Boolean{
+        val cursor = dbw?.query("TUTOR", null, "STAZIONE_ENTRATA='$entrata' and STAZIONE_USCITA='$uscita'", null, null, null, null)
+        if(cursor?.count == 0)
+            return false
+        return true
     }
+
 
     companion object {
         /**

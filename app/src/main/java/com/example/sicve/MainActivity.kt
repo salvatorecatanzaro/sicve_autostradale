@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sicve.login.HardCodedCredentialsAuthentication
 import com.example.sicve.login.UserAuthentication
+import com.example.sicve.utils.DBHelper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -26,6 +27,8 @@ class MainActivity : AppCompatActivity() {
             username.setText("")
             password.setText("")
         }
+        val db : DBHelper = DBHelper(this)
+        val d = db.readableDatabase
         buttonSubmit.setOnClickListener {
             // clearing user_name and password edit text views on reset button click
             val intent = Intent(this, AdminActivity::class.java)

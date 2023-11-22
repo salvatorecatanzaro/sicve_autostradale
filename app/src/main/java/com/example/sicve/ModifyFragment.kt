@@ -1,10 +1,19 @@
 package com.example.sicve
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.LinearLayout
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.marginStart
+import androidx.core.view.marginTop
+import com.example.sicve.entities.HighWay
+import com.example.sicve.utils.DBHelper
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -33,8 +42,28 @@ class ModifyFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_modify, container, false)
+        val view = inflater.inflate(R.layout.fragment_modify, container, false)
+        val constraint_layout = view.findViewById<ConstraintLayout>(R.id.constraint_layout_modify)
+        val db : DBHelper = DBHelper(view.context)
+        val dbr = db.readableDatabase
+        var highway : HighWay? = HighWay.getHighway(dbr)
+        var test = ""
+        val dynamicButton = Button(view.context)
+        // setting layout_width and layout_height using layout parameters
+        val params =
+            ConstraintLayout.LayoutParams(
+                ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT,
+            ).apply {
+                circleConstraint = dynamicButton.id
+                circleRadius = 100
+                circleAngle = 60f
+                marginStart = 28
+                marginEnd = 11
+                width = 144
+                height = 33
+            }
+        constraint_layout.addView(dynamicButton)
+        return view
     }
 
     companion object {
