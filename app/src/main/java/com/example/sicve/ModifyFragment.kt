@@ -1,6 +1,5 @@
 package com.example.sicve
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,10 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.LinearLayout
+import android.widget.Switch
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.marginStart
-import androidx.core.view.marginTop
 import com.example.sicve.entities.HighWay
 import com.example.sicve.utils.DBHelper
 
@@ -43,26 +41,68 @@ class ModifyFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_modify, container, false)
-        val constraint_layout = view.findViewById<ConstraintLayout>(R.id.constraint_layout_modify)
+        val constraintLayout = view.findViewById<ConstraintLayout>(R.id.constraint_layout_modify)
         val db : DBHelper = DBHelper(view.context)
         val dbr = db.readableDatabase
         var highway : HighWay? = HighWay.getHighway(dbr)
         var test = ""
-        val dynamicButton = Button(view.context)
+
+
+        val tutorAttivoSwitch : Switch = Switch(view.context)
+        tutorAttivoSwitch.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        tutorAttivoSwitch.x = 10f
+        tutorAttivoSwitch.y = 300f
+        tutorAttivoSwitch.text = "Tutor attivo?"
+        constraintLayout.addView(tutorAttivoSwitch)
+
+        val nomeStazioneEntrataTextView : TextView = TextView(view.context)
+        nomeStazioneEntrataTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        nomeStazioneEntrataTextView.x = 10f
+        nomeStazioneEntrataTextView.y = 400f
+        nomeStazioneEntrataTextView.text = "Stazione Entrata"
+        constraintLayout.addView(nomeStazioneEntrataTextView)
+
+        val nomeStazioneEntrataEditTextView : EditText = EditText(view.context)
+        nomeStazioneEntrataEditTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        nomeStazioneEntrataEditTextView.x = 500f
+        nomeStazioneEntrataEditTextView.y = 360f
+        constraintLayout.addView(nomeStazioneEntrataEditTextView)
+
+        val nomeStazioneUscitaTextView : TextView = TextView(view.context)
+        nomeStazioneUscitaTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        nomeStazioneUscitaTextView.x = 10f
+        nomeStazioneUscitaTextView.y = 500f
+        nomeStazioneUscitaTextView.text = "Stazione Uscita"
+        constraintLayout.addView(nomeStazioneUscitaTextView)
+
+        val limiteVelocitaTextView : TextView = TextView(view.context)
+        limiteVelocitaTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        limiteVelocitaTextView.x = 10f
+        limiteVelocitaTextView.y = 600f
+        limiteVelocitaTextView.text = "Limite autovelox"
+        constraintLayout.addView(limiteVelocitaTextView)
+
+
+
+
+
+        /*val dynamicButton = Button(view.context)
         // setting layout_width and layout_height using layout parameters
-        val params =
-            ConstraintLayout.LayoutParams(
-                ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT,
-            ).apply {
-                circleConstraint = dynamicButton.id
-                circleRadius = 100
-                circleAngle = 60f
-                marginStart = 28
-                marginEnd = 11
-                width = 144
-                height = 33
-            }
-        constraint_layout.addView(dynamicButton)
+        dynamicButton.setText("Button 4 added dynamically")
+        dynamicButton.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+        dynamicButton.x = 10f
+        dynamicButton.y = 200f
+        constraintLayout.addView(dynamicButton)*/
+
+        /*val button = Button(this)
+        button.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT)
+        button.text = "Click me"
+        button.setOnClickListener(View.OnClickListener {
+            button.text = "You just clicked me"
+        })
+        button.setBackgroundColor(Color.GREEN)
+        button.setTextColor(Color.RED)
+        constraintLayout.addView(button);*/
         return view
     }
 
