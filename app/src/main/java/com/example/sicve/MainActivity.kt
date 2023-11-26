@@ -9,7 +9,6 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sicve.login.HardCodedCredentialsAuthentication
 import com.example.sicve.login.UserAuthentication
-import com.example.sicve.utils.DBHelper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,24 +16,28 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         getSupportActionBar()?.hide()
         // get reference to all views
-        var username = findViewById<EditText>(R.id.stazione_entrata)
-        var password = findViewById<EditText>(R.id.password)
-        var buttonReset = findViewById<Button>(R.id.button_reset)
-        var buttonSubmit = findViewById<Button>(R.id.button_submit)
+        val username = findViewById<EditText>(R.id.stazione_entrata)
+        val password = findViewById<EditText>(R.id.password)
+        val buttonReset = findViewById<Button>(R.id.button_reset)
+        val buttonSubmit = findViewById<Button>(R.id.button_submit)
 
         buttonReset.setOnClickListener {
             // clearing user_name and password edit text views on reset button click
             username.setText("")
             password.setText("")
         }
-        val db : DBHelper = DBHelper(this)
-        val d = db.readableDatabase
+
         buttonSubmit.setOnClickListener {
             // clearing user_name and password edit text views on reset button click
-            val intent = Intent(this, AdminActivity::class.java)
-            intent.putExtra("username", username.getText().toString())
+            val intent: Intent
+
             val auth : UserAuthentication = HardCodedCredentialsAuthentication(username=username.getText().toString(), password=password.getText().toString())
             val result = auth.login()
+            val ruolo = result.values.iterator().next().ruolo
+
+            intent = if(ruolo.lowercase() == "admin") Intent(this, AdminActivity::class.java) else Intent(this, UserActivity::class.java)
+            intent.putExtra("username", username.getText().toString())
+
             val errorText = result.entries.iterator().next().key
             if(result.contains("Success")) {
                 startActivity(intent)

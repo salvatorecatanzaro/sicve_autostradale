@@ -39,9 +39,9 @@ class HighWay(
         }
 
 
-        fun getAutoveloxList(db: SQLiteDatabase?) : MutableList<Autovelox> {
+        fun getAutoveloxList(db: SQLiteDatabase?, tutorId: String) : MutableList<Autovelox> {
             var autoveloxList = mutableListOf<Autovelox>()
-            val cursor = db?.query("AUTOVELOX", null, null, null, null, null, null)
+            val cursor = db?.query("AUTOVELOX", null, "TUTOR_FK='$tutorId'", null, null, null, null)
             if(cursor?.count == 0) {
                 cursor.close()
                 return autoveloxList
@@ -59,7 +59,7 @@ class HighWay(
             val cursor = db?.query("COMPUTER", null, "AUTOVELOX_FK=$autoveloxId", null, null, null, null)
             if(cursor?.count == 0) {
                 cursor.close()
-                return Computer(cursor.getInt(0))
+                return Computer(1)
             }
             cursor!!.moveToNext()
             val computer = Computer(cursor.getInt(0))
@@ -76,7 +76,8 @@ class HighWay(
             }
             cursor!!.moveToNext()
             val attivo = cursor.getInt(0) == 1
-            tutor = Tutor(attivo, getAutoveloxList(db), cursor.getString(1), cursor.getString(2))
+            val stazioneEntrata = cursor.getString(1)
+            tutor = Tutor(attivo, getAutoveloxList(db, stazioneEntrata), stazioneEntrata, cursor.getString(2))
 
             cursor.close()
             return tutor
