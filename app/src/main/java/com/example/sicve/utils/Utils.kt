@@ -41,54 +41,32 @@ class Utils {
 
             // Nome tutor
             val linearLayout0 = LinearLayout(view.context)
-            linearLayout0.orientation = LinearLayout.HORIZONTAL
-            linearLayout0.layoutParams = getLayoutParams(view, 1)
-
-            // Save modification button
-            val buttonSave = Button(view.context)
-            buttonSave.text = "V"
-            buttonSave.id = View.generateViewId()
-            buttonSave.setOnClickListener{
-                updateTutor(highWayBlock, formMap.get(buttonSave.id))
-                DBHelper.updateTutorModifyView(dbw, highWayBlock.tutor!!)
-            }
-
-            val buttonDelete = Button(view.context)
-            buttonDelete.text = "X"
-            buttonDelete.id = View.generateViewId()
-            buttonDelete.setOnClickListener{
-                DBHelper.deleteHighwayBlockModifyView(dbw, highWayBlock)
-            }
-
-
-            val title: TextView = TextView(view.context)
-            title.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-            title.text = tutor.stazioneEntrata
-            title.setTypeface(null, Typeface.BOLD)
-            title.textSize = 20f
-            linearLayout0.addView(title)
-            linearLayout0.addView(buttonSave)
-            linearLayout0.addView(buttonDelete)
             linearLayoutContainer.addView(linearLayout0)
-
             // Tutor attivo
             val linearLayout = LinearLayout(view.context)
+            linearLayoutContainer.addView(linearLayout)
+            // Stazione Entrata
+            val linearLayout2 = LinearLayout(view.context)
+            linearLayoutContainer.addView(linearLayout2)
+            // Stazione Uscita
+            val linearLayout3 = LinearLayout(view.context)
+            linearLayoutContainer.addView(linearLayout3)
+            // Limite velocita
+            val autoveloxList = highWayBlock.tutor!!.listaAutovelox
+
+            // Tutor attivo
             linearLayout.orientation = LinearLayout.HORIZONTAL
             linearLayout.layoutParams = getLayoutParams(view, 2)
             val tutorAttivoSwitch : Switch = Switch(view.context)
             tutorAttivoSwitch.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             tutorAttivoSwitch.text = "Tutor attivo?"
             tutorAttivoSwitch.isChecked = tutor.attivo
-
             linearLayout.addView(tutorAttivoSwitch)
-            linearLayoutContainer.addView(linearLayout)
             currentTutorMap.put("tutor_attivo", tutorAttivoSwitch)
 
             // Stazione Entrata
-            val linearLayout2 = LinearLayout(view.context)
             linearLayout2.orientation = LinearLayout.HORIZONTAL
             linearLayout2.layoutParams = getLayoutParams(view, 2)
-
             val nomeStazioneEntrataTextView : TextView = TextView(view.context)
             nomeStazioneEntrataTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             nomeStazioneEntrataTextView.text = "Stazione Entrata"
@@ -99,11 +77,9 @@ class Utils {
 
             linearLayout2.addView(nomeStazioneEntrataTextView)
             linearLayout2.addView(nomeStazioneEntrataEditTextView)
-            linearLayoutContainer.addView(linearLayout2)
             currentTutorMap.put("stazione_entrata", nomeStazioneEntrataEditTextView)
 
             // Stazione Uscita
-            val linearLayout3 = LinearLayout(view.context)
             linearLayout3.orientation = LinearLayout.HORIZONTAL
             linearLayout3.layoutParams = getLayoutParams(view, 2)
 
@@ -113,16 +89,15 @@ class Utils {
             val nomeStazioneUscitaEditTextView : EditText = EditText(view.context)
             nomeStazioneUscitaEditTextView.setText(tutor.stazioneUscita)
             nomeStazioneUscitaEditTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-
             linearLayout3.addView(nomeStazioneUscitaTextView)
             linearLayout3.addView(nomeStazioneUscitaEditTextView)
-            linearLayoutContainer.addView(linearLayout3)
             currentTutorMap.put("stazione_uscita", nomeStazioneUscitaEditTextView)
 
+            var autoveloxLinearLayoutList = mutableListOf<View>()
             // Limite velocita
-            val autoveloxList = highWayBlock.tutor!!.listaAutovelox
             for(autovelox in autoveloxList) {
                 val linearLayout4 = LinearLayout(view.context)
+                autoveloxLinearLayoutList.add(linearLayout4)
                 linearLayout4.orientation = LinearLayout.HORIZONTAL
                 linearLayout4.layoutParams = getLayoutParams(view, 2)
 
@@ -143,12 +118,57 @@ class Utils {
                 )
                 limiteVelocitaEditTextView.setText(autovelox.limiteVelocita.toString()
                 )
-
+                val buttonDeleteAutovelox = Button(view.context)
+                currentTutorMap[autovelox.id.toString()] = limiteVelocitaEditTextView
+                buttonDeleteAutovelox.setOnClickListener{
+                    linearLayoutContainer.removeView(linearLayout4)
+                    DBHelper.deleteAutoveloxById(dbw, autovelox.id)
+                }
+                buttonDeleteAutovelox.text = "X"
+                buttonDeleteAutovelox.id = View.generateViewId()
                 linearLayout4.addView(limiteVelocitaTextView)
                 linearLayout4.addView(limiteVelocitaEditTextView)
+                linearLayout4.addView(buttonDeleteAutovelox)
                 linearLayoutContainer.addView(linearLayout4)
-                currentTutorMap[autovelox.id.toString()] = limiteVelocitaEditTextView
             }
+
+
+
+            // Nome tutor
+            // Save modification button
+            linearLayout0.orientation = LinearLayout.HORIZONTAL
+            linearLayout0.layoutParams = getLayoutParams(view, 1)
+            val buttonSave = Button(view.context)
+            buttonSave.text = "V"
+            buttonSave.id = View.generateViewId()
+            buttonSave.setOnClickListener{
+                updateTutor(highWayBlock, formMap.get(buttonSave.id))
+                DBHelper.updateTutorModifyView(dbw, highWayBlock.tutor!!)
+
+            }
+
+            val buttonDelete = Button(view.context)
+            buttonDelete.text = "X"
+            buttonDelete.id = View.generateViewId()
+            buttonDelete.setOnClickListener{
+                DBHelper.deleteHighwayBlockModifyView(dbw, highWayBlock)
+                linearLayoutContainer.removeView(linearLayout0)
+                linearLayoutContainer.removeView(linearLayout)
+                linearLayoutContainer.removeView(linearLayout2)
+                linearLayoutContainer.removeView(linearLayout3)
+                for(autoveloxView in autoveloxLinearLayoutList)
+                    linearLayoutContainer.removeView(autoveloxView)
+            }
+
+
+            val title: TextView = TextView(view.context)
+            title.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            title.text = tutor.stazioneEntrata
+            title.setTypeface(null, Typeface.BOLD)
+            title.textSize = 20f
+            linearLayout0.addView(title)
+            linearLayout0.addView(buttonSave)
+            linearLayout0.addView(buttonDelete)
 
             formMap.put(buttonSave.id, currentTutorMap)
         }

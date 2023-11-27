@@ -177,6 +177,10 @@ class DBHelper(context: Context?) :
 
         }
 
+        fun deleteAutoveloxById(dbw: SQLiteDatabase, id: Int) {
+            dbw.delete("AUTOVELOX", "ID=${id}", null)
+        }
+
         private const val DB_NAME = "sicve"
         private const val DB_VERSION = 1 //gestito dall’utente
     }
