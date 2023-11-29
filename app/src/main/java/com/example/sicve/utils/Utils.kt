@@ -9,9 +9,8 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Switch
 import android.widget.TextView
-import androidx.fragment.app.FragmentTransaction
+import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
-import com.example.sicve.entities.HighWay
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
 
@@ -19,89 +18,73 @@ class Utils {
 
 
     companion object {
-        var formMap = mutableMapOf<Int, MutableMap<String, Any>>()
-        fun highwayBlockBuilder(
-            highway: HighWay,
-            stazione_entrata: String,
-            stazione_uscita: String,
-            limite_velocita_int: Int
-        )
-        {
-
-
-
-        }
+        private var formMap = mutableMapOf<Int, MutableMap<String, Any>>()
 
         fun generateEditTutorForm(highWayBlock: HighwayBlock?, view: View, dbw: SQLiteDatabase)
         {
 
-            var currentTutorMap = mutableMapOf<String, Any>()
+            val currentTutorMap = mutableMapOf<String, Any>()
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.linear_lay_id)
             val tutor: Tutor = highWayBlock!!.tutor!!
 
-            // Nome tutor
             val linearLayout0 = LinearLayout(view.context)
             linearLayoutContainer.addView(linearLayout0)
-            // Tutor attivo
             val linearLayout = LinearLayout(view.context)
             linearLayoutContainer.addView(linearLayout)
-            // Stazione Entrata
             val linearLayout2 = LinearLayout(view.context)
             linearLayoutContainer.addView(linearLayout2)
-            // Stazione Uscita
             val linearLayout3 = LinearLayout(view.context)
             linearLayoutContainer.addView(linearLayout3)
-            // Limite velocita
             val autoveloxList = highWayBlock.tutor!!.listaAutovelox
 
             // Tutor attivo
             linearLayout.orientation = LinearLayout.HORIZONTAL
-            linearLayout.layoutParams = getLayoutParams(view, 2)
-            val tutorAttivoSwitch : Switch = Switch(view.context)
+            linearLayout.layoutParams = getLayoutParams(2)
+            val tutorAttivoSwitch = SwitchCompat(view.context)
             tutorAttivoSwitch.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             tutorAttivoSwitch.text = "Tutor attivo?"
             tutorAttivoSwitch.isChecked = tutor.attivo
             linearLayout.addView(tutorAttivoSwitch)
-            currentTutorMap.put("tutor_attivo", tutorAttivoSwitch)
+            currentTutorMap["tutor_attivo"] = tutorAttivoSwitch
 
             // Stazione Entrata
             linearLayout2.orientation = LinearLayout.HORIZONTAL
-            linearLayout2.layoutParams = getLayoutParams(view, 2)
-            val nomeStazioneEntrataTextView : TextView = TextView(view.context)
+            linearLayout2.layoutParams = getLayoutParams(2)
+            val nomeStazioneEntrataTextView = TextView(view.context)
             nomeStazioneEntrataTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             nomeStazioneEntrataTextView.text = "Stazione Entrata"
-            val nomeStazioneEntrataEditTextView : EditText = EditText(view.context)
+            val nomeStazioneEntrataEditTextView = EditText(view.context)
             nomeStazioneEntrataEditTextView.setText(tutor.stazioneEntrata)
             nomeStazioneEntrataEditTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             nomeStazioneEntrataEditTextView.setEnabled(false)
 
             linearLayout2.addView(nomeStazioneEntrataTextView)
             linearLayout2.addView(nomeStazioneEntrataEditTextView)
-            currentTutorMap.put("stazione_entrata", nomeStazioneEntrataEditTextView)
+            currentTutorMap["stazione_entrata"] = nomeStazioneEntrataEditTextView
 
             // Stazione Uscita
             linearLayout3.orientation = LinearLayout.HORIZONTAL
-            linearLayout3.layoutParams = getLayoutParams(view, 2)
+            linearLayout3.layoutParams = getLayoutParams(2)
 
-            val nomeStazioneUscitaTextView : TextView = TextView(view.context)
+            val nomeStazioneUscitaTextView = TextView(view.context)
             nomeStazioneUscitaTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             nomeStazioneUscitaTextView.text = "Stazione Uscita"
-            val nomeStazioneUscitaEditTextView : EditText = EditText(view.context)
+            val nomeStazioneUscitaEditTextView = EditText(view.context)
             nomeStazioneUscitaEditTextView.setText(tutor.stazioneUscita)
             nomeStazioneUscitaEditTextView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             linearLayout3.addView(nomeStazioneUscitaTextView)
             linearLayout3.addView(nomeStazioneUscitaEditTextView)
-            currentTutorMap.put("stazione_uscita", nomeStazioneUscitaEditTextView)
+            currentTutorMap["stazione_uscita"] = nomeStazioneUscitaEditTextView
 
-            var autoveloxLinearLayoutList = mutableListOf<View>()
+            val autoveloxLinearLayoutList = mutableListOf<View>()
             // Limite velocita
             for(autovelox in autoveloxList) {
                 val linearLayout4 = LinearLayout(view.context)
                 autoveloxLinearLayoutList.add(linearLayout4)
                 linearLayout4.orientation = LinearLayout.HORIZONTAL
-                linearLayout4.layoutParams = getLayoutParams(view, 2)
+                linearLayout4.layoutParams = getLayoutParams(2)
 
-                val limiteVelocitaTextView: TextView = TextView(view.context)
+                val limiteVelocitaTextView = TextView(view.context)
                 limiteVelocitaTextView.setLayoutParams(
                     ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -109,7 +92,7 @@ class Utils {
                     )
                 )
                 limiteVelocitaTextView.text = "Limite autovelox ${autovelox.id}"
-                val limiteVelocitaEditTextView: EditText = EditText(view.context)
+                val limiteVelocitaEditTextView = EditText(view.context)
                 limiteVelocitaEditTextView.setLayoutParams(
                     ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.WRAP_CONTENT,
@@ -132,12 +115,9 @@ class Utils {
                 linearLayoutContainer.addView(linearLayout4)
             }
 
-
-
             // Nome tutor
-            // Save modification button
             linearLayout0.orientation = LinearLayout.HORIZONTAL
-            linearLayout0.layoutParams = getLayoutParams(view, 1)
+            linearLayout0.layoutParams = getLayoutParams(1)
             val buttonSave = Button(view.context)
             buttonSave.text = "V"
             buttonSave.id = View.generateViewId()
@@ -161,7 +141,7 @@ class Utils {
             }
 
 
-            val title: TextView = TextView(view.context)
+            val title = TextView(view.context)
             title.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
             title.text = tutor.stazioneEntrata
             title.setTypeface(null, Typeface.BOLD)
@@ -170,14 +150,71 @@ class Utils {
             linearLayout0.addView(buttonSave)
             linearLayout0.addView(buttonDelete)
 
-            formMap.put(buttonSave.id, currentTutorMap)
+            formMap[buttonSave.id] = currentTutorMap
+        }
+
+
+        fun generateTutorView(highWayBlock: HighwayBlock?, view: View, dbw: SQLiteDatabase)
+        {
+
+            val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
+            val tutor: Tutor = highWayBlock!!.tutor!!
+
+            val linearLayout0 = LinearLayout(view.context)
+            linearLayoutContainer.addView(linearLayout0)
+
+            val entrata = TextView(view.context)
+            entrata.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            entrata.text = tutor.stazioneEntrata
+            entrata.setTypeface(null, Typeface.BOLD)
+            entrata.textSize = 20f
+            val uscita = TextView(view.context)
+            uscita.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            uscita.text = tutor.stazioneUscita
+            uscita.setTypeface(null, Typeface.BOLD)
+            uscita.textSize = 20f
+            val buttonTransitHighway = Button(view.context)
+            buttonTransitHighway.text = "Percorri tratta"
+            buttonTransitHighway.id = View.generateViewId()
+            buttonTransitHighway.setOnClickListener{
+                updateTutor(highWayBlock, formMap.get(buttonTransitHighway.id))
+                DBHelper.updateTutorModifyView(dbw, highWayBlock.tutor!!)
+
+            }
+            linearLayout0.layoutParams = getLayoutParams(1)
+            linearLayout0.addView(entrata)
+            linearLayout0.addView(uscita)
+            linearLayout0.addView(buttonTransitHighway)
+
+            var autoveloxCount = 0
+            for(autovelox in tutor.listaAutovelox) {
+                val linearLayout4 = LinearLayout(view.context)
+                linearLayout4.orientation = LinearLayout.HORIZONTAL
+                linearLayout4.layoutParams = getLayoutParams(2)
+
+                autoveloxCount += 1
+                if(tutor.listaAutovelox.size == autoveloxCount) {
+                    val limiteVelocitaTextView = TextView(view.context)
+                    limiteVelocitaTextView.setLayoutParams(
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    )
+                    limiteVelocitaTextView.text = "Numero Autovelox ${autoveloxCount}"
+                    limiteVelocitaTextView.textSize = 10f
+                    linearLayout4.addView(limiteVelocitaTextView)
+                }
+                linearLayoutContainer.addView(linearLayout4)
+            }
+
         }
 
         private fun updateTutor(highWayBlock: HighwayBlock, tutorMap: MutableMap<String, Any>?) {
-            highWayBlock.tutor!!.stazioneEntrata = (tutorMap!!.get("stazione_entrata") as EditText).text.toString()
-            highWayBlock.tutor!!.stazioneUscita = (tutorMap.get("stazione_uscita") as EditText).text.toString()
-            highWayBlock.tutor!!.attivo = (tutorMap.get("tutor_attivo") as Switch).isChecked()
-            highWayBlock.tutor!!.stazioneEntrata = (tutorMap.get("stazione_entrata") as EditText).text.toString()
+            highWayBlock.tutor!!.stazioneEntrata = (tutorMap!!["stazione_entrata"] as EditText).text.toString()
+            highWayBlock.tutor!!.stazioneUscita = (tutorMap["stazione_uscita"] as EditText).text.toString()
+            highWayBlock.tutor!!.attivo = (tutorMap["tutor_attivo"] as Switch).isChecked()
+            highWayBlock.tutor!!.stazioneEntrata = (tutorMap["stazione_entrata"] as EditText).text.toString()
             for(autovelox in highWayBlock.tutor!!.listaAutovelox){
                 if(tutorMap[autovelox.id.toString()] != null)
                 {
@@ -187,14 +224,14 @@ class Utils {
         }
 
 
-        fun getLayoutParams(view: View, position: Int) : LinearLayout.LayoutParams{
+        fun getLayoutParams(position: Int) : LinearLayout.LayoutParams{
             /**
              *  The selected position will determine tha margins
              *  1 top 100 -> used for first entry
              *  2 top 0 -> used for mid entries
              */
 
-            val topPositionMap = mapOf<Int, Int>(
+            val topPositionMap = mapOf(
                 1 to 100,
                 2 to 0
             )
