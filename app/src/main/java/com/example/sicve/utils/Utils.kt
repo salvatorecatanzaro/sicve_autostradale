@@ -14,8 +14,11 @@ import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
 import com.example.sicve.entities.Auto
+import com.example.sicve.entities.ConcreteAutoBuilder
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
+import com.example.sicve.entities.Veicolo
+import com.example.sicve.entities.VeicoloBuilder
 
 class Utils {
 
@@ -259,7 +262,7 @@ class Utils {
             return layoutParams
         }
 
-        fun generateMyCarForm(dbw: SQLiteDatabase?, view: View?) {
+        fun generateMyCarForm(dbw: SQLiteDatabase?, view: View?, username: String?) {
 
             val linearLayoutContainer = view!!.findViewById<LinearLayout>(R.id.my_vehicle_linear_lay_id)
 
@@ -351,7 +354,34 @@ class Utils {
             buttonSaveMyVehicle.text = "Salva"
             buttonSaveMyVehicle.id = View.generateViewId()
             buttonSaveMyVehicle.setOnClickListener{
-                print("")
+                val casaAutomobilistica = casaAutomobilisticaViewEdit.text.toString()
+                val targa = targaEditTextView.text.toString()
+                val velocitaMassimaVeicolo = velocitaMassimaEditText.text.toString().toInt()
+                val veicoloBuilder: VeicoloBuilder = ConcreteAutoBuilder()
+                val veicolo: Veicolo
+                if(spinner.selectedItem.toString() == "AUTO"){
+                    veicoloBuilder
+                        .numeroRuote(4)
+                        .casaAutomobilistica(casaAutomobilistica)
+                        .targa(targa)
+                        .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
+                }
+                if(tipoVeicoloView.text.toString() == "MOTO"){
+                    veicoloBuilder
+                        .numeroRuote(2)
+                        .casaAutomobilistica(casaAutomobilistica)
+                        .targa(targa)
+                        .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
+                }
+                if(tipoVeicoloView.text.toString() == "CAMION"){
+                    veicoloBuilder
+                        .numeroRuote(4)
+                        .casaAutomobilistica(casaAutomobilistica)
+                        .targa(targa)
+                        .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
+                }
+                veicolo = veicoloBuilder.build()
+                veicolo.saveVehicle(dbw!!, username!!)
             }
             linearLayout5.layoutParams = getLayoutParams(1)
             linearLayout5.addView(buttonSaveMyVehicle)

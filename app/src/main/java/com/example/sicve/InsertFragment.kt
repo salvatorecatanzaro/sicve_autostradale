@@ -40,7 +40,7 @@ class InsertFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_insert, container, false)
-        //view.context.deleteDatabase("sicve")
+        view.context.deleteDatabase("sicve")
         val db = DBHelper(view.context)
         val dbw = db.writableDatabase
         val values = ContentValues().apply{

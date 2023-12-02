@@ -22,6 +22,7 @@ class UserActivity : AppCompatActivity() {
         val firstFragment = WalkHighwayFragment()
         val secondFragment = MessagesFragment()
         val thirdFragment = MyVehicleFragment()
+        thirdFragment.setCurrentUser(username)
 
         selectFragment(firstFragment)
 

@@ -39,7 +39,7 @@ class WalkHighwayFragment : Fragment() {
             val dbr = db.readableDatabase
             val dbw = db.writableDatabase
             var highway : HighWay? = HighWay.getHighway(dbr)
-            val auto = Auto("ca383me", 4, "FIAT", 4, 200, "AUTO")
+            val auto = Auto("ca383me", 4, "FIAT", 4, 200)
             var blockCount = 0
 
             // Building button needed to check whether the user wants to receive messges or not

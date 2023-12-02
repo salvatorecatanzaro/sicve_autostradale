@@ -16,6 +16,7 @@ class MyVehicleFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var currentUser: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +34,13 @@ class MyVehicleFragment : Fragment() {
         val db  = DBHelper(view.context)
         val dbr = db.readableDatabase
         val dbw = db.writableDatabase
-
-        Utils.generateMyCarForm(dbw, view)
+        val user = ""
+        Utils.generateMyCarForm(dbw, view, this.currentUser)
         return view
+    }
+
+    fun setCurrentUser(user: String?){
+        this.currentUser = user
     }
 
 }

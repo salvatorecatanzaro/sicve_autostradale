@@ -5,9 +5,12 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.icu.text.SimpleDateFormat
+import com.example.sicve.entities.Auto
 import com.example.sicve.entities.Autovelox
+import com.example.sicve.entities.Camion
 import com.example.sicve.entities.HighWay
 import com.example.sicve.entities.HighwayBlock
+import com.example.sicve.entities.Moto
 import com.example.sicve.entities.Tutor
 import java.time.LocalDateTime
 import java.util.Date
@@ -38,26 +41,31 @@ class DBHelper(context: Context?) :
                 "FOREIGN KEY(HIGHWAY_BLOCK_FK) REFERENCES HIGHWAY_BLOCK(HIGHWAYBLOCK_PK) ON DELETE CASCADE," +
                 "PRIMARY KEY(STAZIONE_ENTRATA))"
 
-        val createAuto = "CREATE TABLE AUTO (" + "TARGA INTEGER PRIMARY KEY AUTOINCREMENT," +
+        val createAuto = "CREATE TABLE AUTO (" + "TARGA TEXT PRIMARY KEY," +
                 "NUMERO_RUOTE INTEGER NOT NULL," +
                 "CASA_AUTOMOBILISTICA TEXT NOT NULL," +
                 "NUMERO_PORTE INTEGER NOT NULL," +
                 "TIPO_VEICOLO TEXT NOT NULL," +
-                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL)"
+                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL," +
+                "USER_FK TEXT NOT NULL," +
+                "FOREIGN KEY(USER_FK) REFERENCES USER(USERNAME))"
 
-        val createCamion = "CREATE TABLE CAMION (" + "TARGA INTEGER PRIMARY KEY AUTOINCREMENT," +
+        val createCamion = "CREATE TABLE CAMION (" + "TARGA TEXT PRIMARY KEY," +
                 "NUMERO_RUOTE INTEGER NOT NULL," +
                 "CASA_AUTOMOBILISTICA TEXT NOT NULL," +
                 "NUMERO_PORTE INTEGER NOT NULL," +
                 "TIPO_VEICOLO TEXT NOT NULL," +
-                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL)"
+                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL," +
+                "USER_FK TEXT NOT NULL," +
+                "FOREIGN KEY(USER_FK) REFERENCES USER(USERNAME))"
 
-        val createMoto = "CREATE TABLE  MOTO (" + "TARGA INTEGER PRIMARY KEY AUTOINCREMENT," +
+        val createMoto = "CREATE TABLE  MOTO (" + "TARGA TEXT PRIMARY KEY," +
                 "NUMERO_RUOTE INTEGER NOT NULL," +
                 "CASA_AUTOMOBILISTICA TEXT NOT NULL," +
-                "NUMERO_PORTE INTEGER NOT NULL," +
                 "TIPO_VEICOLO TEXT NOT NULL," +
-                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL)"
+                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL," +
+                "USER_FK TEXT NOT NULL," +
+                "FOREIGN KEY(USER_FK) REFERENCES USER(USERNAME))"
 
         val createComputer = "CREATE TABLE  COMPUTER (" +
                 "COMPUTER_PK INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -74,6 +82,12 @@ class DBHelper(context: Context?) :
                 "TARGA_FK TEXT NOT NULL," +
                 "FOREIGN KEY(TARGA_FK) REFERENCES TUTOR(TARGA) ON DELETE CASCADE)"
 
+        val createUser = "CREATE TABLE  USER (" + "USERNAME TEXT PRIMARY KEY," +
+                "NOME TEXT NOT NULL," +
+                "COGNOME TEXT NOT NULL," +
+                "PASSWORD TEXT NOT NULL," +
+                "RUOLO TEXT NOT NULL," +
+                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL)"
 
         db.execSQL(createHighway)
         db.execSQL(createHighwayBlock)
@@ -84,6 +98,7 @@ class DBHelper(context: Context?) :
         db.execSQL(createComputer)
         db.execSQL(createAutovelox)
         db.execSQL(carTransitMessage)
+        db.execSQL(createUser)
 
     }
 
@@ -220,6 +235,57 @@ class DBHelper(context: Context?) :
             cursor.close()
             return messageList
         }
+
+        fun insertAuto(dbw: SQLiteDatabase, username: String, auto: Auto)
+        {
+            val values = ContentValues().apply{
+                put("TARGA", auto.targa)
+                put("NUMERO_RUOTE", auto.numeroRuote)
+                put("CASA_AUTOMOBILISTICA", auto.casaAutomobilistica)
+                put("NUMERO_PORTE", auto.numeroPorte)
+                put("TIPO_VEICOLO", "AUTO")
+                put("VELOCITA_MASSIMA_VEICOLO", auto.velocitaMassimaVeicolo)
+                put("USER_FK", username)
+            }
+
+            val result = dbw.insert("AUTO",  null, values)
+
+        }
+
+        fun insertMoto(dbw: SQLiteDatabase, username: String, moto: Moto)
+        {
+            val values = ContentValues().apply{
+                put("TARGA", moto.targa)
+                put("NUMERO_RUOTE", moto.numeroRuote)
+                put("CASA_AUTOMOBILISTICA", moto.casaAutomobilistica)
+                put("TIPO_VEICOLO", "MOTO")
+                put("VELOCITA_MASSIMA_VEICOLO", moto.velocitaMassimaVeicolo)
+                put("USER_FK", username)
+            }
+
+            val result = dbw.insert("MOTO",  null, values)
+
+        }
+
+        fun insertCamion(dbw: SQLiteDatabase, username: String, camion: Camion)
+        {
+            val values = ContentValues().apply{
+                put("TARGA", camion.targa)
+                put("NUMERO_RUOTE", camion.numeroRuote)
+                put("CASA_AUTOMOBILISTICA", camion.casaAutomobilistica)
+                put("NUMERO_PORTE", camion.numeroPorte)
+                put("TIPO_VEICOLO", "CAMION")
+                put("VELOCITA_MASSIMA_VEICOLO", camion.velocitaMassimaVeicolo)
+                put("USER_FK", username)
+            }
+
+            val result = dbw.insert("CAMION",  null, values)
+
+        }
+
+
+
+
 
         private const val DB_NAME = "sicve"
         private const val DB_VERSION = 1 //gestito dall’utente
