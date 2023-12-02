@@ -2,9 +2,9 @@ package com.example.sicve.entities
 
 abstract class Veicolo(
     targa: String,
-    numeroRuote: String,
+    numeroRuote: Int,
     casaAutomobilistica: String,
-    velocitaMassimaVeicolo: String,
+    velocitaMassimaVeicolo: Int,
     tipoVeicolo: String
 ) {
     abstract fun entraInAutostrada() : Unit

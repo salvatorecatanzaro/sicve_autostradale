@@ -4,8 +4,13 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.icu.text.SimpleDateFormat
+import com.example.sicve.entities.Autovelox
+import com.example.sicve.entities.HighWay
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
+import java.time.LocalDateTime
+import java.util.Date
 
 
 class DBHelper(context: Context?) :
@@ -64,6 +69,12 @@ class DBHelper(context: Context?) :
                 "TUTOR_FK TEXT NOT NULL," +
                 "FOREIGN KEY(TUTOR_FK) REFERENCES TUTOR(STAZIONE_ENTRATA) ON DELETE CASCADE)"
 
+        val carTransitMessage = "CREATE TABLE MESSAGE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "MESSAGE TEXT NOT NULL," +
+                "TARGA_FK TEXT NOT NULL," +
+                "FOREIGN KEY(TARGA_FK) REFERENCES TUTOR(TARGA) ON DELETE CASCADE)"
+
+
         db.execSQL(createHighway)
         db.execSQL(createHighwayBlock)
         db.execSQL(createTutor)
@@ -72,6 +83,7 @@ class DBHelper(context: Context?) :
         db.execSQL(createMoto)
         db.execSQL(createComputer)
         db.execSQL(createAutovelox)
+        db.execSQL(carTransitMessage)
 
     }
 
@@ -179,6 +191,34 @@ class DBHelper(context: Context?) :
 
         fun deleteAutoveloxById(dbw: SQLiteDatabase, id: Int) {
             dbw.delete("AUTOVELOX", "ID=${id}", null)
+        }
+
+        fun insertMessage(targa: String, tutor: Tutor, dbw: SQLiteDatabase) {
+
+            val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
+            val currentDate = sdf.format(Date())
+            val message = "[${currentDate}] - Il veicolo con targa $targa ha percorso la tratta ${tutor.stazioneEntrata} - ${tutor.stazioneUscita}"
+            val values = ContentValues().apply{
+                put("MESSAGE", message)
+                put("TARGA_FK", targa)
+            }
+
+            val messageId = dbw.insert("MESSAGE",  null, values)
+        }
+
+        fun getMessages(dbr: SQLiteDatabase, targa: String): MutableList<String>
+        {
+            var messageList = mutableListOf<String>()
+            val cursor = dbr!!.query("MESSAGE", null, "TARGA_FK='$targa'", null, null, null, null)
+            if(cursor?.count == 0) {
+                cursor.close()
+                return messageList
+            }
+            while(cursor!!.moveToNext()) {
+                messageList.add(cursor.getString(1))
+            }
+            cursor.close()
+            return messageList
         }
 
         private const val DB_NAME = "sicve"

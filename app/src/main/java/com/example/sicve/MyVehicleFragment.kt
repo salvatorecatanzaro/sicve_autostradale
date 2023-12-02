@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.example.sicve.utils.DBHelper
+import com.example.sicve.utils.Utils
 
 
 private const val ARG_PARAM1 = "param1"
@@ -27,7 +29,13 @@ class MyVehicleFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return null
+        val view = inflater.inflate(R.layout.fragment_my_vehicle, container, false)
+        val db  = DBHelper(view.context)
+        val dbr = db.readableDatabase
+        val dbw = db.writableDatabase
+
+        Utils.generateMyCarForm(dbw, view)
+        return view
     }
 
 }

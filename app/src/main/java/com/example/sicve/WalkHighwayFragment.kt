@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.ScrollView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
+import com.example.sicve.entities.Auto
 import com.example.sicve.entities.HighWay
+import com.example.sicve.entities.Tutor
 import com.example.sicve.utils.DBHelper
 import com.example.sicve.utils.Utils
 
@@ -35,9 +39,21 @@ class WalkHighwayFragment : Fragment() {
             val dbr = db.readableDatabase
             val dbw = db.writableDatabase
             var highway : HighWay? = HighWay.getHighway(dbr)
+            val auto = Auto("ca383me", 4, "FIAT", 4, 200, "AUTO")
+            var blockCount = 0
+
+            // Building button needed to check whether the user wants to receive messges or not
+            val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
+            val linearLayout = LinearLayout(view.context)
+            linearLayout.layoutParams = Utils.getLayoutParams(2)
+            val messaggiAttivi = SwitchCompat(view.context)
+            linearLayout.addView(messaggiAttivi)
+            messaggiAttivi.text = "Messaggi attivi?"
+            linearLayoutContainer.addView(linearLayout)
             for(highWayBlock in highway?.highwayBlock.orEmpty())
             {
-                Utils.generateTutorView(highWayBlock, view, dbw)
+
+                Utils.generateTutorView(highWayBlock, view, auto, dbw, messaggiAttivi)
             }
 
             val scrollView = view.findViewById<ScrollView>(R.id.transit_scroll_lay_id)

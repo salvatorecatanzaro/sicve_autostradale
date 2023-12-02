@@ -4,13 +4,16 @@ import android.database.sqlite.SQLiteDatabase
 import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Spinner
 import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
+import com.example.sicve.entities.Auto
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
 
@@ -154,7 +157,7 @@ class Utils {
         }
 
 
-        fun generateTutorView(highWayBlock: HighwayBlock?, view: View, dbw: SQLiteDatabase)
+        fun generateTutorView(highWayBlock: HighwayBlock?, view: View, auto: Auto, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
@@ -177,9 +180,8 @@ class Utils {
             buttonTransitHighway.text = "Percorri tratta"
             buttonTransitHighway.id = View.generateViewId()
             buttonTransitHighway.setOnClickListener{
-                updateTutor(highWayBlock, formMap.get(buttonTransitHighway.id))
-                DBHelper.updateTutorModifyView(dbw, highWayBlock.tutor!!)
-
+                if(messaggiAttivi.isChecked)
+                    DBHelper.insertMessage(auto.targa, tutor, dbw)
             }
             linearLayout0.layoutParams = getLayoutParams(1)
             linearLayout0.addView(entrata)
@@ -208,6 +210,18 @@ class Utils {
                 linearLayoutContainer.addView(linearLayout4)
             }
 
+        }
+
+        fun generateTutorView(message: String, view: View)
+        {
+
+            val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.messages_linear_lay_id)
+            val linearLayout0 = LinearLayout(view.context)
+            val messageView = TextView(view.context)
+            messageView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
+            messageView.text = message
+            linearLayout0.addView(messageView)
+            linearLayoutContainer.addView(linearLayout0)
         }
 
         private fun updateTutor(highWayBlock: HighwayBlock, tutorMap: MutableMap<String, Any>?) {
@@ -243,6 +257,105 @@ class Utils {
 
             layoutParams.setMargins(40, topPositionMap[position]!!, 20, 0)
             return layoutParams
+        }
+
+        fun generateMyCarForm(dbw: SQLiteDatabase?, view: View?) {
+
+            val linearLayoutContainer = view!!.findViewById<LinearLayout>(R.id.my_vehicle_linear_lay_id)
+
+            var linearLayout = LinearLayout(view.context)
+            val targaTextView = TextView(view.context)
+            targaTextView.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+            targaTextView.text = "Targa"
+
+            val targaEditTextView = EditText(view.context)
+            targaEditTextView.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+
+            linearLayout.addView(targaTextView)
+            linearLayout.addView(targaEditTextView)
+            linearLayoutContainer.addView(linearLayout)
+
+            var linearLayout3 = LinearLayout(view.context)
+            val velocitaMassimaView = TextView(view.context)
+            velocitaMassimaView.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+            velocitaMassimaView.text = "Velocita massima"
+
+            val velocitaMassimaEditText = EditText(view.context)
+            velocitaMassimaEditText.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+
+            linearLayout3.addView(velocitaMassimaView)
+            linearLayout3.addView(velocitaMassimaEditText)
+            linearLayoutContainer.addView(linearLayout3)
+
+            var linearLayout1 = LinearLayout(view.context)
+            val casaAutomobilisticaView = TextView(view.context)
+            casaAutomobilisticaView.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+            casaAutomobilisticaView.text = "Casa automobilistica"
+
+            val casaAutomobilisticaViewEdit = EditText(view.context)
+            casaAutomobilisticaViewEdit.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+
+            linearLayout1.addView(casaAutomobilisticaView)
+            linearLayout1.addView(casaAutomobilisticaViewEdit)
+            linearLayoutContainer.addView(linearLayout1)
+
+            val spinner = Spinner(view.context)
+            val spinnerData = arrayOf("AUTO", "MOTO", "CAMION")
+            spinner.adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_dropdown_item, spinnerData)
+            val linearLayout2 = LinearLayout(view.context)
+
+            val tipoVeicoloView = TextView(view.context)
+            tipoVeicoloView.setLayoutParams(
+                ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT
+                )
+            )
+            tipoVeicoloView.text = "Tipo veicolo"
+            linearLayout2.addView(tipoVeicoloView)
+            linearLayout2.addView(spinner)
+            linearLayoutContainer.addView(linearLayout2)
+
+            var linearLayout5 = LinearLayout(view.context)
+            val buttonSaveMyVehicle = Button(view.context)
+            buttonSaveMyVehicle.text = "Salva"
+            buttonSaveMyVehicle.id = View.generateViewId()
+            buttonSaveMyVehicle.setOnClickListener{
+                print("")
+            }
+            linearLayout5.layoutParams = getLayoutParams(1)
+            linearLayout5.addView(buttonSaveMyVehicle)
+            linearLayoutContainer.addView(linearLayout5)
         }
     }
 }

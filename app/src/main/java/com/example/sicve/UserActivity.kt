@@ -27,9 +27,9 @@ class UserActivity : AppCompatActivity() {
 
         bottomNavigationView.setOnNavigationItemSelectedListener {
             when(it.itemId){
-                R.id.add->selectFragment(firstFragment)
-                R.id.modify->selectFragment(secondFragment)
-                R.id.info->selectFragment(thirdFragment)
+                R.id.transit_hw_block->selectFragment(firstFragment)
+                R.id.messages->selectFragment(secondFragment)
+                R.id.my_vehicle->selectFragment(thirdFragment)
 
             }
             true
