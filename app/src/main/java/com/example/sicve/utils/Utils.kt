@@ -15,10 +15,13 @@ import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
 import com.example.sicve.entities.Auto
 import com.example.sicve.entities.ConcreteAutoBuilder
+import com.example.sicve.entities.ConcreteCamionBuilder
+import com.example.sicve.entities.ConcreteMotoBuilder
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
 import com.example.sicve.entities.Veicolo
 import com.example.sicve.entities.VeicoloBuilder
+import kotlin.random.Random
 
 class Utils {
 
@@ -160,7 +163,7 @@ class Utils {
         }
 
 
-        fun generateTutorView(highWayBlock: HighwayBlock?, view: View, auto: Auto, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
+        fun generateTutorView(highWayBlock: HighwayBlock?, view: View, targa: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
@@ -183,8 +186,30 @@ class Utils {
             buttonTransitHighway.text = "Percorri tratta"
             buttonTransitHighway.id = View.generateViewId()
             buttonTransitHighway.setOnClickListener{
+                val multe = mutableListOf<String>()
                 if(messaggiAttivi.isChecked)
-                    DBHelper.insertMessage(auto.targa, tutor, dbw)
+                    DBHelper.insertMessage(targa, tutor, dbw, "")
+
+                var autoveloxCount = 0
+                var autoveloxSum = 0
+                var velMedia = 0
+                for(autovelox in tutor.listaAutovelox)
+                {
+                    val velCorrente = (80..velMassima).shuffled().last()
+                    velMedia +=  velCorrente
+                    if( velCorrente > autovelox.limiteVelocita)
+                        multe.add("Multa per aver superato il limite di velocità. velocita corrente: $velCorrente all'autovelox con id ${autovelox.id}")
+                    autoveloxCount += 1
+                    autoveloxSum += autovelox.limiteVelocita
+                    if(tutor.listaAutovelox.size == autoveloxCount){
+                        val velocitaMediaLimite = autoveloxSum / tutor.listaAutovelox.size
+                        val velocitaMediaVeicolo = velMedia / tutor.listaAutovelox.size
+                        if(velocitaMediaLimite < velocitaMediaVeicolo)
+                            autovelox.computer.listaMulte.add("Multa per aver superato il limite di velocita media. Velocita media: $velocitaMediaVeicolo velocita media tutor $velocitaMediaLimite")
+
+                    }
+                    autovelox.computer.salvaInfrazioni(autovelox.computer.id, dbw)
+                }
             }
             linearLayout0.layoutParams = getLayoutParams(1)
             linearLayout0.addView(entrata)
@@ -266,6 +291,22 @@ class Utils {
 
             val linearLayoutContainer = view!!.findViewById<LinearLayout>(R.id.my_vehicle_linear_lay_id)
 
+            val tmpValuesMap = mutableMapOf(
+                "targa" to "",
+                "velocita_massima" to "",
+                "tipo_veicolo" to "",
+                "casa_automobilistica" to ""
+            )
+
+            val selectionMap = mutableMapOf(
+                "AUTO" to 0,
+                "MOTO" to 1,
+                "CAMION" to 2
+            )
+
+            popTmpMap(tmpValuesMap, username, dbw!!)
+
+
             var linearLayout = LinearLayout(view.context)
             val targaTextView = TextView(view.context)
             targaTextView.setLayoutParams(
@@ -283,7 +324,7 @@ class Utils {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
             )
-
+            targaEditTextView.setText(tmpValuesMap["targa"])
             linearLayout.addView(targaTextView)
             linearLayout.addView(targaEditTextView)
             linearLayoutContainer.addView(linearLayout)
@@ -305,7 +346,7 @@ class Utils {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
             )
-
+            velocitaMassimaEditText.setText(tmpValuesMap["velocita_massima"])
             linearLayout3.addView(velocitaMassimaView)
             linearLayout3.addView(velocitaMassimaEditText)
             linearLayoutContainer.addView(linearLayout3)
@@ -327,7 +368,7 @@ class Utils {
                     ViewGroup.LayoutParams.WRAP_CONTENT
                 )
             )
-
+            casaAutomobilisticaViewEdit.setText(tmpValuesMap["casa_automobilistica"])
             linearLayout1.addView(casaAutomobilisticaView)
             linearLayout1.addView(casaAutomobilisticaViewEdit)
             linearLayoutContainer.addView(linearLayout1)
@@ -335,6 +376,8 @@ class Utils {
             val spinner = Spinner(view.context)
             val spinnerData = arrayOf("AUTO", "MOTO", "CAMION")
             spinner.adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_dropdown_item, spinnerData)
+            if(tmpValuesMap["tipo_veicolo"] != "")
+                spinner.setSelection(selectionMap[tmpValuesMap["tipo_veicolo"]]!!)
             val linearLayout2 = LinearLayout(view.context)
 
             val tipoVeicoloView = TextView(view.context)
@@ -354,11 +397,13 @@ class Utils {
             buttonSaveMyVehicle.text = "Salva"
             buttonSaveMyVehicle.id = View.generateViewId()
             buttonSaveMyVehicle.setOnClickListener{
+                DBHelper.deleteVehicleByFk(dbw, username)
                 val casaAutomobilistica = casaAutomobilisticaViewEdit.text.toString()
                 val targa = targaEditTextView.text.toString()
                 val velocitaMassimaVeicolo = velocitaMassimaEditText.text.toString().toInt()
-                val veicoloBuilder: VeicoloBuilder = ConcreteAutoBuilder()
                 val veicolo: Veicolo
+                var veicoloBuilder: VeicoloBuilder = ConcreteAutoBuilder()
+
                 if(spinner.selectedItem.toString() == "AUTO"){
                     veicoloBuilder
                         .numeroRuote(4)
@@ -366,14 +411,17 @@ class Utils {
                         .targa(targa)
                         .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
                 }
-                if(tipoVeicoloView.text.toString() == "MOTO"){
+                else if(spinner.selectedItem.toString() == "MOTO"){
+                    veicoloBuilder = ConcreteMotoBuilder()
+
                     veicoloBuilder
                         .numeroRuote(2)
                         .casaAutomobilistica(casaAutomobilistica)
                         .targa(targa)
                         .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
                 }
-                if(tipoVeicoloView.text.toString() == "CAMION"){
+                else if(spinner.selectedItem.toString() == "CAMION"){
+                    veicoloBuilder = ConcreteCamionBuilder()
                     veicoloBuilder
                         .numeroRuote(4)
                         .casaAutomobilistica(casaAutomobilistica)
@@ -386,6 +434,44 @@ class Utils {
             linearLayout5.layoutParams = getLayoutParams(1)
             linearLayout5.addView(buttonSaveMyVehicle)
             linearLayoutContainer.addView(linearLayout5)
+        }
+
+        private fun popTmpMap(tmpValuesMap: MutableMap<String, String>, username: String?, dbr: SQLiteDatabase) {
+            var targaTmp = ""
+            var velocitaMasssimaTmp = ""
+            var casaAutomobilisticaTmp = ""
+            var spinnerTmp = ""
+
+            var cursor = dbr.query("AUTO", null, "USER_FK='${username}'", null, null, null, null)
+            if(cursor?.count != 0){
+                cursor!!.moveToNext()
+                targaTmp = cursor.getString(0)
+                velocitaMasssimaTmp = cursor.getInt(5).toString()
+                casaAutomobilisticaTmp = cursor.getString(2)
+                spinnerTmp = cursor.getString(4)
+            }
+            cursor = dbr.query("MOTO", null, "USER_FK='${username}'", null, null, null, null)
+            if(cursor?.count != 0){
+                cursor!!.moveToNext()
+                targaTmp = cursor.getString(0)
+                velocitaMasssimaTmp = cursor.getInt(4).toString()
+                casaAutomobilisticaTmp = cursor.getString(2)
+                spinnerTmp = cursor.getString(3)
+            }
+            cursor = dbr.query("CAMION", null, "USER_FK='${username}'", null, null, null, null)
+            if(cursor?.count != 0){
+                cursor!!.moveToNext()
+                targaTmp = cursor.getString(0)
+                velocitaMasssimaTmp = cursor.getInt(5).toString()
+                casaAutomobilisticaTmp = cursor.getString(2)
+                spinnerTmp = cursor.getString(4)
+            }
+            cursor.close()
+
+            tmpValuesMap.put("targa", targaTmp)
+            tmpValuesMap.put("velocita_massima", velocitaMasssimaTmp)
+            tmpValuesMap.put("tipo_veicolo", spinnerTmp)
+            tmpValuesMap.put("casa_automobilistica", casaAutomobilisticaTmp)
         }
     }
 }

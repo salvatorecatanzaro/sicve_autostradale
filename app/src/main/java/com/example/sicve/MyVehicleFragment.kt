@@ -34,8 +34,8 @@ class MyVehicleFragment : Fragment() {
         val db  = DBHelper(view.context)
         val dbr = db.readableDatabase
         val dbw = db.writableDatabase
-        val user = ""
         Utils.generateMyCarForm(dbw, view, this.currentUser)
+
         return view
     }
 

@@ -21,7 +21,7 @@ class MessagesFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-
+    private var username: String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -39,13 +39,31 @@ class MessagesFragment : Fragment() {
         val dbr = db.readableDatabase
         val dbw = db.writableDatabase
 
-        val messages: MutableList<String> = DBHelper.getMessages(dbr, "ca383me")
+        var counter = 0
+        var messages: MutableList<String> = mutableListOf()
+        var tables = arrayOf("AUTO", "MOTO", "CAMION")
+        while(counter < 3 && messages.isEmpty()) {
+            val cursor =  dbw?.query(tables[counter], null, "USER_FK='${this.username}'", null, null, null, null)
+            if(cursor!!.count == 0){
+                print("")
+            }
+            else{
+                cursor?.moveToNext()
+                messages = DBHelper.getMessages(dbw, cursor!!.getString(0))
+            }
+            counter += 1
+        }
+
 
         for(message in messages)
         {
             Utils.generateTutorView(message, view)
         }
         return view
+    }
+
+    fun setCurrentUser(username: String?) {
+        this.username = username
     }
 
 }

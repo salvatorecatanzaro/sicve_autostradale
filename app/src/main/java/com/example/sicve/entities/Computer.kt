@@ -1,7 +1,14 @@
 package com.example.sicve.entities
 
-class Computer(var id: Int) {
-    fun inoltraInfrazione() : Unit {
+import android.database.sqlite.SQLiteDatabase
+import com.example.sicve.utils.DBHelper
 
+class Computer(
+    var id: Int,
+    var listaMulte: MutableList<String>
+) {
+
+    fun salvaInfrazioni(computerId: Int, dbw: SQLiteDatabase) : Unit {
+        DBHelper.insertInfrazioni(listaMulte, computerId, dbw)
     }
 }

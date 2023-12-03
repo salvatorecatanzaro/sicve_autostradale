@@ -23,6 +23,8 @@ class UserActivity : AppCompatActivity() {
         val secondFragment = MessagesFragment()
         val thirdFragment = MyVehicleFragment()
         thirdFragment.setCurrentUser(username)
+        firstFragment.setCurrentUser(username)
+        secondFragment.setCurrentUser(username)
 
         selectFragment(firstFragment)
 

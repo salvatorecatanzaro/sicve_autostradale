@@ -1,14 +1,14 @@
 package com.example.sicve.entities
 
 
-class ConcreteCamionBUilder(
-    var camion: Camion,
-    var targa: String,
-    var numeroRuote: Int,
-    var velocitaMassimaVeicolo: Int,
-    var casaAutomobilistica: String,
-): VeicoloBuilder {
+class ConcreteCamionBuilder(
 
+): VeicoloBuilder {
+    lateinit var camion: Camion
+    var targa: String = ""
+    var numeroRuote: Int = 0
+    var velocitaMassimaVeicolo: Int = 0
+    var casaAutomobilistica: String = ""
     override fun targa(targa: String): VeicoloBuilder {
         this.targa = targa
         return this

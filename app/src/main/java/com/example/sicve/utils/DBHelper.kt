@@ -89,6 +89,11 @@ class DBHelper(context: Context?) :
                 "RUOLO TEXT NOT NULL," +
                 "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL)"
 
+        val createMulte = "CREATE TABLE  MULTE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "MESSAGE TEXT NOT NULL," +
+                "COMPUTER_FK INTEGER NOT NULL," +
+                "FOREIGN KEY(COMPUTER_FK) REFERENCES COMPUTER(COMPUTER_PK))"
+
         db.execSQL(createHighway)
         db.execSQL(createHighwayBlock)
         db.execSQL(createTutor)
@@ -98,6 +103,7 @@ class DBHelper(context: Context?) :
         db.execSQL(createComputer)
         db.execSQL(createAutovelox)
         db.execSQL(carTransitMessage)
+        db.execSQL(createMulte)
         db.execSQL(createUser)
 
     }
@@ -208,11 +214,11 @@ class DBHelper(context: Context?) :
             dbw.delete("AUTOVELOX", "ID=${id}", null)
         }
 
-        fun insertMessage(targa: String, tutor: Tutor, dbw: SQLiteDatabase) {
+        fun insertMessage(targa: String, tutor: Tutor, dbw: SQLiteDatabase, extendedMsg: String) {
 
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
             val currentDate = sdf.format(Date())
-            val message = "[${currentDate}] - Il veicolo con targa $targa ha percorso la tratta ${tutor.stazioneEntrata} - ${tutor.stazioneUscita}"
+            val message = "[${currentDate}] - Il veicolo con targa $targa ha percorso la tratta ${tutor.stazioneEntrata} - ${tutor.stazioneUscita} ${extendedMsg}"
             val values = ContentValues().apply{
                 put("MESSAGE", message)
                 put("TARGA_FK", targa)
@@ -283,8 +289,22 @@ class DBHelper(context: Context?) :
 
         }
 
+        fun deleteVehicleByFk(dbw: SQLiteDatabase, username: String?) {
+            val res = dbw.delete("AUTO", "USER_FK='${username}'", null)
+            val res1 = dbw.delete("MOTO", "USER_FK='${username}'", null)
+            val res2 = dbw.delete("CAMION", "USER_FK='${username}'", null)
 
+        }
 
+        fun insertInfrazioni(listaMulte: MutableList<String>, computerId: Int, dbw: SQLiteDatabase) {
+            for(multa in listaMulte) {
+                val values = ContentValues().apply {
+                    put("COMPUTER_FK", computerId)
+                    put("MESSAGE", multa)
+                }
+                val result = dbw.insert("MULTE", null, values)
+            }
+        }
 
 
         private const val DB_NAME = "sicve"

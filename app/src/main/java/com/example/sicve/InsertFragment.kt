@@ -40,14 +40,16 @@ class InsertFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_insert, container, false)
-        view.context.deleteDatabase("sicve")
         val db = DBHelper(view.context)
         val dbw = db.writableDatabase
         val values = ContentValues().apply{
             put("NAME", "Main")
         }
-
-        dbw.insert("HIGHWAY", null, values)
+        var deleteDb = true
+        if(deleteDb) {
+            view.context.deleteDatabase("sicve")
+            val hwid = dbw.insert("HIGHWAY", null, values)
+        }
         val saveButton = view.findViewById<Button>(R.id.button)
         val stazioneEntrataEt = view.findViewById<EditText>(R.id.stazione_entrata)
         val stazioneUscitaEt = view.findViewById<EditText>(R.id.stazione_uscita)

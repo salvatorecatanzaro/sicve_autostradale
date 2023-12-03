@@ -56,13 +56,25 @@ class HighWay(
 
 
         fun getComputerById(db: SQLiteDatabase?, autoveloxId: Int) : Computer {
-            val cursor = db?.query("COMPUTER", null, "AUTOVELOX_FK=$autoveloxId", null, null, null, null)
+            var cursor = db?.query("COMPUTER", null, "AUTOVELOX_FK=$autoveloxId", null, null, null, null)
+            val multe = mutableListOf<String>()
+
             if(cursor?.count == 0) {
                 cursor.close()
-                return Computer(1)
+                return Computer(1, multe)
             }
             cursor!!.moveToNext()
-            val computer = Computer(cursor.getInt(0))
+            val computerId = cursor.getInt(0)
+            cursor.close()
+            cursor = db?.query("MULTE", null, "COMPUTER_FK=$computerId", null, null, null, null)
+            if(cursor?.count == 0)
+                return Computer(computerId, multe)
+
+            while(cursor!!.moveToNext())
+            {
+                multe.add(cursor.getString(1))
+            }
+            val computer = Computer(computerId, multe)
             cursor.close()
             return computer
         }
