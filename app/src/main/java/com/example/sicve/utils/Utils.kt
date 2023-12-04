@@ -197,8 +197,11 @@ class Utils {
                 {
                     val velCorrente = (80..velMassima).shuffled().last()
                     velMedia +=  velCorrente
-                    if( velCorrente > autovelox.limiteVelocita)
-                        multe.add("Multa per aver superato il limite di velocità. velocita corrente: $velCorrente all'autovelox con id ${autovelox.id}")
+                    if( velCorrente > autovelox.limiteVelocita) {
+                        val msg = "Multa per aver superato il limite di velocità. velocita corrente: $velCorrente all'autovelox con id ${autovelox.id}"
+                        multe.add(msg)
+                        DBHelper.insertMessage(targa, tutor, dbw, msg)
+                    }
                     autoveloxCount += 1
                     autoveloxSum += autovelox.limiteVelocita
                     if(tutor.listaAutovelox.size == autoveloxCount){

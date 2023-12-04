@@ -1,8 +1,8 @@
 package com.example.sicve.entities
 
 class User(vals: List<String>) {
-    var nome : String
-    var cognome : String
+    private var nome : String
+    private var cognome : String
     var username : String
     var password : String
     var ruolo : String

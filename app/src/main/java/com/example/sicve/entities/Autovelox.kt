@@ -5,5 +5,4 @@ class Autovelox(
      var limiteVelocita: Int,
      var computer: Computer
 ) {
-     var targaInfrazione: Map<String, String> = mutableMapOf()
 }

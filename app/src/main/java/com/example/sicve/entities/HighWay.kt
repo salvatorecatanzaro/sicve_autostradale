@@ -12,19 +12,22 @@ class HighWay(
     // Used to declare static members
     companion object{
         fun getHighway(db: SQLiteDatabase?) : HighWay? {
-            var instance : HighWay? = null
+            val instance : HighWay?
             val cursor = db?.query("HIGHWAY", null, null, null, null, null, null)
-            if(cursor?.count == 0)
+            if(cursor?.count == 0) {
+                cursor.close()
                 return null
+            }
             cursor!!.moveToNext()
             val id = cursor.getInt(0)
             instance = HighWay(id, getHighwayBlock(db, id))
+            cursor.close()
             return instance
         }
 
         private fun getHighwayBlock(db: SQLiteDatabase, idHighway: Int): MutableList<HighwayBlock?> {
             val highwayBlockList = mutableListOf<HighwayBlock?>()
-            val cursor = db?.query("HIGHWAY_BLOCK", null, "HIGHWAY_FK=$idHighway", null, null, null, null)
+            val cursor = db.query("HIGHWAY_BLOCK", null, "HIGHWAY_FK=$idHighway", null, null, null, null)
             if(cursor?.count == 0) {
                 cursor.close()
                 return highwayBlockList
@@ -39,8 +42,8 @@ class HighWay(
         }
 
 
-        fun getAutoveloxList(db: SQLiteDatabase?, tutorId: String) : MutableList<Autovelox> {
-            var autoveloxList = mutableListOf<Autovelox>()
+        private fun getAutoveloxList(db: SQLiteDatabase?, tutorId: String) : MutableList<Autovelox> {
+            val autoveloxList = mutableListOf<Autovelox>()
             val cursor = db?.query("AUTOVELOX", null, "TUTOR_FK='$tutorId'", null, null, null, null)
             if(cursor?.count == 0) {
                 cursor.close()
@@ -55,7 +58,7 @@ class HighWay(
         }
 
 
-        fun getComputerById(db: SQLiteDatabase?, autoveloxId: Int) : Computer {
+        private fun getComputerById(db: SQLiteDatabase?, autoveloxId: Int) : Computer {
             var cursor = db?.query("COMPUTER", null, "AUTOVELOX_FK=$autoveloxId", null, null, null, null)
             val multe = mutableListOf<String>()
 
@@ -79,7 +82,7 @@ class HighWay(
             return computer
         }
 
-        fun getTutor(db: SQLiteDatabase?, idHighwayBlock: Int) : Tutor?{
+        private fun getTutor(db: SQLiteDatabase?, idHighwayBlock: Int) : Tutor?{
             var tutor : Tutor? = null
             val cursor = db?.query("TUTOR", null, "HIGHWAY_BLOCK_FK=$idHighwayBlock", null, null, null, null)
             if(cursor?.count == 0) {

@@ -1,9 +1,7 @@
 package com.example.sicve.entities
 
-class ConcreteMotoBuilder(
-
-): VeicoloBuilder {
-    lateinit var moto: Moto
+class ConcreteMotoBuilder: VeicoloBuilder {
+    private lateinit var moto: Moto
     var targa: String = ""
     var numeroRuote: Int = 0
     var velocitaMassimaVeicolo: Int = 0

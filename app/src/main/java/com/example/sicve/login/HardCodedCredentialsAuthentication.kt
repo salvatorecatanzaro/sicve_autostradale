@@ -2,13 +2,13 @@ package com.example.sicve.login
 
 import com.example.sicve.entities.User
 
-class HardCodedCredentialsAuthentication(username : String, password : String) :  UserAuthentication(username, password) {
+class HardCodedCredentialsAuthentication(username : String, password : String) :  UserAuthentication() {
     private var usr: String = username
     private var pwd: String = password
 
 
     override fun login(): Map<String, User> {
-        val lineList = mutableListOf<String>("admin admin admin admin ADMIN", "utente utente utente utente UTENTE")
+        val lineList = mutableListOf("admin admin admin admin ADMIN", "utente utente utente utente UTENTE")
         val nonexistinguser = User("not not not not NOT".split(" "))
         for (it: String in lineList) {
             if (it.trim().startsWith("//")) {
@@ -18,11 +18,9 @@ class HardCodedCredentialsAuthentication(username : String, password : String) :
             val user = User(dati)
 
             if (usr == user.username) {
-                var message: String
+                var message = "Success"
 
-                if (pwd == user.password)
-                    message = "Success"
-                else
+                if (pwd != user.password)
                     message = "Password errata!"
                 return mapOf(message to user)
             }

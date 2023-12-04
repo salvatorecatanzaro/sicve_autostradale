@@ -32,7 +32,6 @@ class MyVehicleFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_my_vehicle, container, false)
         val db  = DBHelper(view.context)
-        val dbr = db.readableDatabase
         val dbw = db.writableDatabase
         Utils.generateMyCarForm(dbw, view, this.currentUser)
 

@@ -41,7 +41,7 @@ class ModifyFragment : Fragment() {
         val db  = DBHelper(view.context)
         val dbr = db.readableDatabase
         val dbw = db.writableDatabase
-        var highway : HighWay? = HighWay.getHighway(dbr)
+        val highway : HighWay? = HighWay.getHighway(dbr)
         for(highWayBlock in highway?.highwayBlock.orEmpty())
         {
             Utils.generateEditTutorForm(highWayBlock, view, dbw)

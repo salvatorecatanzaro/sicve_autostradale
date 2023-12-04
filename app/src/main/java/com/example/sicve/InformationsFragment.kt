@@ -5,6 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.sicve.entities.HighWay
+import com.example.sicve.utils.DBHelper
+import com.example.sicve.utils.Utils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -20,6 +23,7 @@ class InformationsFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var username: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +38,16 @@ class InformationsFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_info, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_info, container, false)
+        val db  = DBHelper(view.context)
+        val dbw = db.writableDatabase
+        var highway : HighWay? = HighWay.getHighway(dbw)
+
+
+
+
+
+        return view    }
 
     companion object {
         /**
@@ -56,4 +68,10 @@ class InformationsFragment : Fragment() {
                 }
             }
     }
+
+
+    fun setCurrentUser(username: String?) {
+        this.username = username
+    }
+
 }

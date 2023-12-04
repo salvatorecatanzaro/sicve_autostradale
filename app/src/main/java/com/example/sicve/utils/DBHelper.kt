@@ -6,13 +6,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.icu.text.SimpleDateFormat
 import com.example.sicve.entities.Auto
-import com.example.sicve.entities.Autovelox
 import com.example.sicve.entities.Camion
-import com.example.sicve.entities.HighWay
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Moto
 import com.example.sicve.entities.Tutor
-import java.time.LocalDateTime
 import java.util.Date
 
 
@@ -218,7 +215,7 @@ class DBHelper(context: Context?) :
 
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
             val currentDate = sdf.format(Date())
-            val message = "[${currentDate}] - Il veicolo con targa $targa ha percorso la tratta ${tutor.stazioneEntrata} - ${tutor.stazioneUscita} ${extendedMsg}"
+            val message = "[${currentDate}] - Il veicolo con targa $targa ha percorso la tratta ${tutor.stazioneEntrata} - ${tutor.stazioneUscita} $extendedMsg"
             val values = ContentValues().apply{
                 put("MESSAGE", message)
                 put("TARGA_FK", targa)
@@ -229,8 +226,8 @@ class DBHelper(context: Context?) :
 
         fun getMessages(dbr: SQLiteDatabase, targa: String): MutableList<String>
         {
-            var messageList = mutableListOf<String>()
-            val cursor = dbr!!.query("MESSAGE", null, "TARGA_FK='$targa'", null, null, null, null)
+            val messageList = mutableListOf<String>()
+            val cursor = dbr.query("MESSAGE", null, "TARGA_FK='$targa'", null, null, null, null)
             if(cursor?.count == 0) {
                 cursor.close()
                 return messageList

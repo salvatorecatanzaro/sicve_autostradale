@@ -8,7 +8,7 @@ class Computer(
     var listaMulte: MutableList<String>
 ) {
 
-    fun salvaInfrazioni(computerId: Int, dbw: SQLiteDatabase) : Unit {
+    fun salvaInfrazioni(computerId: Int, dbw: SQLiteDatabase) {
         DBHelper.insertInfrazioni(listaMulte, computerId, dbw)
     }
 }

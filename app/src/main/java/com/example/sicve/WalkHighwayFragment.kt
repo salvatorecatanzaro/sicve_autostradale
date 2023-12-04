@@ -8,13 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
-import com.example.sicve.entities.Auto
-import com.example.sicve.entities.ConcreteCamionBuilder
-import com.example.sicve.entities.ConcreteMotoBuilder
 import com.example.sicve.entities.HighWay
-import com.example.sicve.entities.Tutor
-import com.example.sicve.entities.Veicolo
-import com.example.sicve.entities.VeicoloBuilder
 import com.example.sicve.utils.DBHelper
 import com.example.sicve.utils.Utils
 
@@ -43,9 +37,7 @@ class WalkHighwayFragment : Fragment() {
             val db  = DBHelper(view.context)
             val dbr = db.readableDatabase
             val dbw = db.writableDatabase
-            var highway : HighWay? = HighWay.getHighway(dbr)
-            val auto = Auto("ca383me", 4, "FIAT", 4, 200)
-            var blockCount = 0
+            val highway : HighWay? = HighWay.getHighway(dbr)
 
             // Building button needed to check whether the user wants to receive messges or not
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
@@ -57,7 +49,7 @@ class WalkHighwayFragment : Fragment() {
             linearLayoutContainer.addView(linearLayout)
             var counter = 0
             var targa = ""
-            var tables = arrayOf("AUTO", "MOTO", "CAMION")
+            val tables = arrayOf("AUTO", "MOTO", "CAMION")
             var velMassima = 0
             while(counter < 3 && targa == "") {
                 val cursor =  dbw?.query(tables[counter], null, "USER_FK='${this.currentUser}'", null, null, null, null)
@@ -77,6 +69,7 @@ class WalkHighwayFragment : Fragment() {
 
 
                 }
+                cursor.close()
                 counter++
             }
             for(highWayBlock in highway?.highwayBlock.orEmpty())

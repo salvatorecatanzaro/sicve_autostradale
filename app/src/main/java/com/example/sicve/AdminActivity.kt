@@ -24,7 +24,7 @@ class AdminActivity : AppCompatActivity() {
         val firstFragment = InsertFragment()
         val secondFragment = ModifyFragment()
         val thirdFragment = InformationsFragment()
-
+        thirdFragment.setCurrentUser(username)
         selectFragment(firstFragment)
 
         bottomNavigationView.setOnNavigationItemSelectedListener {

@@ -4,12 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
-import com.example.sicve.entities.Auto
-import com.example.sicve.entities.HighWay
 import com.example.sicve.utils.DBHelper
 import com.example.sicve.utils.Utils
 
@@ -36,21 +31,21 @@ class MessagesFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_messages, container, false)
         val db  = DBHelper(view.context)
-        val dbr = db.readableDatabase
         val dbw = db.writableDatabase
 
         var counter = 0
         var messages: MutableList<String> = mutableListOf()
-        var tables = arrayOf("AUTO", "MOTO", "CAMION")
+        val tables = arrayOf("AUTO", "MOTO", "CAMION")
         while(counter < 3 && messages.isEmpty()) {
             val cursor =  dbw?.query(tables[counter], null, "USER_FK='${this.username}'", null, null, null, null)
             if(cursor!!.count == 0){
                 print("")
             }
             else{
-                cursor?.moveToNext()
-                messages = DBHelper.getMessages(dbw, cursor!!.getString(0))
+                cursor.moveToNext()
+                messages = DBHelper.getMessages(dbw, cursor.getString(0))
             }
+            cursor.close()
             counter += 1
         }
 

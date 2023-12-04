@@ -5,5 +5,4 @@ class Tutor(
     var listaAutovelox: MutableList<Autovelox>,
     var stazioneEntrata: String,
     var stazioneUscita: String
-) {
-}
+)

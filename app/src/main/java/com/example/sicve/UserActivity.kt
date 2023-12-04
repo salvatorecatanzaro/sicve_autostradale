@@ -39,7 +39,7 @@ class UserActivity : AppCompatActivity() {
         }
     }
 
-    fun selectFragment(fragment : Fragment){
+    private fun selectFragment(fragment : Fragment){
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.user_fragment_id, fragment)
             commit()
