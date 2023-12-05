@@ -43,7 +43,12 @@ class InformationsFragment : Fragment() {
         val dbw = db.writableDatabase
         var highway : HighWay? = HighWay.getHighway(dbw)
 
+        for(highwayBlock in highway!!.highwayBlock)
+        {
+            val tutor = highwayBlock!!.tutor
+            Utils.generateComputerView(tutor!!, view)
 
+        }
 
 
 

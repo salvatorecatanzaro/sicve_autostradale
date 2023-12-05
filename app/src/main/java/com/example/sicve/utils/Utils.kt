@@ -2,7 +2,6 @@ package com.example.sicve.utils
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import android.graphics.Color
 import android.graphics.Typeface
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
-import android.widget.Switch
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
@@ -27,6 +25,11 @@ class Utils {
 
 
     companion object {
+        private var NOME_STAZIONE_ENTRATA = "Stazione entrata"
+        private var NOME_STAZIONE_USCITA = "Stazione uscita"
+        private var LIMITE_VELOCITA_AUTOVELOX = "Limite autovelox"
+        private var AGGIUNGI_AUTOVELOX = "Aggiungi autovelox"
+
         private var formMap = mutableMapOf<Int, MutableMap<String, Any>>()
 
         fun generateEditTutorForm(highWayBlock: HighwayBlock?, view: View, dbw: SQLiteDatabase)
@@ -34,6 +37,7 @@ class Utils {
 
             val currentTutorMap = mutableMapOf<String, Any>()
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.linear_lay_id)
+
             val tutor: Tutor = highWayBlock!!.tutor!!
 
             val linearLayout0 = LinearLayout(view.context)
@@ -61,14 +65,14 @@ class Utils {
 
             // Stazione Entrata
             val nomeStazioneEntrataTextView = createTextView("Stazione Entrata", view.context)
-            val nomeStazioneEntrataEditTextView = createEditTextView(tutor.stazioneEntrata, view.context)
+            val nomeStazioneEntrataEditTextView = createEditTextView(tutor.stazioneEntrata, false, view.context)
             linearLayout2.addView(nomeStazioneEntrataTextView)
             linearLayout2.addView(nomeStazioneEntrataEditTextView)
             currentTutorMap["stazione_entrata"] = nomeStazioneEntrataEditTextView
 
             // Stazione Uscita
             val nomeStazioneUscitaTextView = createTextView("Stazione Uscita", view.context)
-            val nomeStazioneUscitaEditTextView = createEditTextView(tutor.stazioneUscita, view.context)
+            val nomeStazioneUscitaEditTextView = createEditTextView(tutor.stazioneUscita, true, view.context)
             linearLayout3.addView(nomeStazioneUscitaTextView)
             linearLayout3.addView(nomeStazioneUscitaEditTextView)
             currentTutorMap["stazione_uscita"] = nomeStazioneUscitaEditTextView
@@ -82,12 +86,25 @@ class Utils {
                 linearLayout4.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
 
                 val limiteVelocitaTextView = createTextView("Limite autovelox ${autovelox.id}", view.context)
-                val limiteVelocitaEditTextView = createEditTextView(autovelox.limiteVelocita.toString(), view.context)
+                val limiteVelocitaEditTextView = createEditTextView(autovelox.limiteVelocita.toString(), true, view.context)
                 val buttonDeleteAutovelox = Button(view.context)
                 currentTutorMap[autovelox.id.toString()] = limiteVelocitaEditTextView
                 buttonDeleteAutovelox.setOnClickListener{
-                    linearLayoutContainer.removeView(linearLayout4)
-                    DBHelper.deleteAutoveloxById(dbw, autovelox.id)
+                    if(autoveloxLinearLayoutList.size == 1)
+                    {
+                        DBHelper.deleteHighwayBlockModifyView(dbw, highWayBlock)
+                        linearLayoutContainer.removeView(linearLayout0)
+                        linearLayoutContainer.removeView(linearLayout)
+                        linearLayoutContainer.removeView(linearLayout2)
+                        linearLayoutContainer.removeView(linearLayout3)
+                        for(autoveloxView in autoveloxLinearLayoutList)
+                            linearLayoutContainer.removeView(autoveloxView)
+                    }else
+                    {
+                        linearLayoutContainer.removeView(linearLayout4)
+                        autoveloxLinearLayoutList.remove(linearLayout4)
+                        DBHelper.deleteAutoveloxById(dbw, autovelox.id)
+                    }
                 }
                 buttonDeleteAutovelox.layoutParams = getLayoutParams(40, 0, 10, 0, false, 80, 80)
                 buttonDeleteAutovelox.setBackgroundResource(R.drawable.ic_delete)
@@ -135,7 +152,7 @@ class Utils {
         }
 
 
-        fun generateTutorView(highWayBlock: HighwayBlock?, view: View, targa: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
+        fun generateMessagesView(highWayBlock: HighwayBlock?, view: View, targa: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
@@ -215,7 +232,7 @@ class Utils {
 
         }
 
-        fun generateTutorView(message: String, view: View)
+        fun generateMessagesView(message: String, view: View)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.messages_linear_lay_id)
@@ -227,10 +244,120 @@ class Utils {
             linearLayoutContainer.addView(linearLayout0)
         }
 
+
+        fun generateInsertTutorForm(view: View?, dbw: SQLiteDatabase?) {
+            val insertTutorMap = mutableMapOf<String, Any?>(
+                "tutor_attivo" to null,
+                "stazione_entrata" to null,
+                "stazione_uscita" to null,
+                "limite_autovelox" to mutableListOf<EditText>()
+            )
+            val linearLayoutContainer = view!!.findViewById<LinearLayout>(R.id.insert_linear_lay_id)
+
+            val linearLayout0 = LinearLayout(view.context)
+            val tutorAttivoView = createSwitchCompat("Tutor attivo?", false, view.context)
+            tutorAttivoView.layoutParams = getLayoutParams(5, 30, 5, 0, true, 0, 0)
+            val buttonSave = Button(view.context)
+            buttonSave.layoutParams = getLayoutParams(50, 30, 0, 0, false, 80, 80)
+            buttonSave.setBackgroundResource(R.drawable.ic_save)
+            buttonSave.setOnClickListener{
+                // TODO Add checks to these values, none of them should be null or empty. Number must be numbers
+                val tmpList = mutableListOf<Int>()
+                val tmpStazioneEntrata = (insertTutorMap["stazione_entrata"] as EditText).text.toString()
+                val tmpStazioneUscita = (insertTutorMap["stazione_uscita"] as EditText).text.toString()
+                val isChecked = (insertTutorMap["tutor_attivo"] as SwitchCompat).isChecked()
+                for(autoveloxView in (insertTutorMap["limite_autovelox"] as MutableList<EditText>))
+                {
+                    tmpList.add(autoveloxView.text.toString().toInt())
+                }
+                DBHelper.insertTutor(
+                    dbw!!,
+                    tmpStazioneEntrata,
+                    tmpStazioneUscita,
+                    isChecked,
+                    tmpList
+                )
+            }
+            insertTutorMap["tutor_attivo"] = tutorAttivoView
+            linearLayout0.addView(tutorAttivoView)
+            linearLayout0.addView(buttonSave)
+
+            val linearLayout1 = LinearLayout(view.context)
+            val stazioneEntrataView = createTextView(NOME_STAZIONE_ENTRATA, view.context)
+            stazioneEntrataView.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+            linearLayout1.addView(stazioneEntrataView)
+            val stazioneEntrataViewEdit = createEditTextView("", true, view.context)
+            stazioneEntrataViewEdit.layoutParams = getLayoutParams(50, 10, 0, 0, false, 500, 120)
+            insertTutorMap["stazione_uscita"] = stazioneEntrataViewEdit
+            linearLayout1.addView(stazioneEntrataViewEdit)
+
+            val linearLayout2 = LinearLayout(view.context)
+            val stazioneUscitaView = createTextView(NOME_STAZIONE_USCITA, view.context)
+            stazioneUscitaView.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+            linearLayout2.addView(stazioneUscitaView)
+            val stazioneUscitaViewEdit = createEditTextView("", true, view.context)
+            stazioneUscitaViewEdit.layoutParams = getLayoutParams(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, NOME_STAZIONE_USCITA), 10, 0, 0, false, 500, 120)
+            insertTutorMap["stazione_entrata"] = stazioneUscitaViewEdit
+            linearLayout2.addView(stazioneUscitaViewEdit)
+
+            val linearLayout3 = LinearLayout(view.context)
+            val aggiungiAutovelox = createTextView(AGGIUNGI_AUTOVELOX, view.context)
+            aggiungiAutovelox.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+            linearLayout3.addView(aggiungiAutovelox)
+            val buttonAggiungiAutovelox = Button(view.context)
+            buttonAggiungiAutovelox.layoutParams = getLayoutParams(50, 10, 0, 0, false, 80, 80)
+            buttonAggiungiAutovelox.setBackgroundResource(R.drawable.ic_add)
+            linearLayout3.addView(buttonAggiungiAutovelox)
+            buttonAggiungiAutovelox.setOnClickListener{
+                val linearLayout4 = LinearLayout(view.context)
+                val autoveloxTextView = createTextView(LIMITE_VELOCITA_AUTOVELOX, view.context)
+                autoveloxTextView.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+                linearLayout4.addView(autoveloxTextView)
+                val autoveloxEditTextView = createEditTextView("", true, view.context)
+                autoveloxEditTextView.layoutParams = getLayoutParams(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, LIMITE_VELOCITA_AUTOVELOX), 10, 0, 0, false, 500, 120)
+                autoveloxEditTextView.transformationMethod = null
+                (insertTutorMap["limite_autovelox"] as MutableList<EditText>).add(autoveloxEditTextView)
+                linearLayout4.addView(autoveloxEditTextView)
+                val buttonRimuoviAutovelox = Button(view.context)
+                buttonRimuoviAutovelox.layoutParams = getLayoutParams(50, 10, 0, 0, false, 80, 80)
+                buttonRimuoviAutovelox.setBackgroundResource(R.drawable.ic_delete)
+                buttonRimuoviAutovelox.setOnClickListener{
+                    linearLayoutContainer.removeView(linearLayout4)
+                }
+                linearLayout4.addView(buttonRimuoviAutovelox)
+                linearLayoutContainer.addView(linearLayout4)
+
+            }
+
+            linearLayoutContainer.addView(linearLayout0)
+            linearLayoutContainer.addView(linearLayout1)
+            linearLayoutContainer.addView(linearLayout2)
+            linearLayoutContainer.addView(linearLayout3)
+        }
+
+        private fun getMarginLeftBasedOnFirstString(nomeStazioneEntrata: String, nomeStazioneUscita: String): Int {
+            return (nomeStazioneEntrata.length - nomeStazioneUscita.length) * 20
+        }
+
+        fun generateComputerView(tutor: Tutor, view: View)
+        {
+
+            val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.info_linear_lay_id)
+            for(autovelox in tutor.listaAutovelox) {
+                val linearLayout = LinearLayout(view.context)
+                val computerView = createTextView("Computer ${autovelox.computer.id}", view.context)
+                computerView.layoutParams = getLayoutParams(5, 5, 5, 0, true, 0, 0)
+                linearLayout.addView(computerView)
+                linearLayoutContainer.addView(linearLayout)
+            }
+
+
+        }
+
         private fun updateTutor(highWayBlock: HighwayBlock, tutorMap: MutableMap<String, Any>?) {
             highWayBlock.tutor!!.stazioneEntrata = (tutorMap!!["stazione_entrata"] as EditText).text.toString()
             highWayBlock.tutor!!.stazioneUscita = (tutorMap["stazione_uscita"] as EditText).text.toString()
-            highWayBlock.tutor!!.attivo = (tutorMap["tutor_attivo"] as Switch).isChecked()
+            highWayBlock.tutor!!.attivo = (tutorMap["tutor_attivo"] as SwitchCompat).isChecked()
             highWayBlock.tutor!!.stazioneEntrata = (tutorMap["stazione_entrata"] as EditText).text.toString()
             for(autovelox in highWayBlock.tutor!!.listaAutovelox){
                 if(tutorMap[autovelox.id.toString()] != null)
@@ -452,11 +579,11 @@ class Utils {
             return result
         }
 
-        private fun createEditTextView(s: String, context: Context?): EditText {
+        private fun createEditTextView(s: String, enabled: Boolean, context: Context?): EditText {
             val result = EditText(context)
             result.setText(s)
             result.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-            result.setEnabled(false)
+            result.setEnabled(enabled)
             return result
         }
 

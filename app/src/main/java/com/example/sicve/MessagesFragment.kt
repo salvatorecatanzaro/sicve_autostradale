@@ -52,7 +52,7 @@ class MessagesFragment : Fragment() {
 
         for(message in messages)
         {
-            Utils.generateTutorView(message, view)
+            Utils.generateMessagesView(message, view)
         }
         return view
     }

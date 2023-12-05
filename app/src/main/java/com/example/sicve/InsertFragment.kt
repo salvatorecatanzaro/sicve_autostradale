@@ -8,8 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ScrollView
 import android.widget.Switch
+import com.example.sicve.entities.HighWay
 import com.example.sicve.utils.DBHelper
+import com.example.sicve.utils.Utils
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -41,7 +44,7 @@ class InsertFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_insert, container, false)
         val db = DBHelper(view.context)
-        var deleteDb = false
+        var deleteDb = true
         if(deleteDb) {
             view.context.deleteDatabase("sicve")
 
@@ -51,48 +54,11 @@ class InsertFragment : Fragment() {
             put("NAME", "Main")
         }
         val hwid = dbw.insert("HIGHWAY", null, values)
-        val saveButton = view.findViewById<Button>(R.id.button)
-        val stazioneEntrataEt = view.findViewById<EditText>(R.id.stazione_entrata)
-        val stazioneUscitaEt = view.findViewById<EditText>(R.id.stazione_uscita)
-        val tutorAttivoSw = view.findViewById<Switch>(R.id.tutor_attivo)
-        val limiteVelocitaEt = view.findViewById<EditText>(R.id.limite_autovelox)
-        var limiteVelocitaInt = 0
+        Utils.generateInsertTutorForm(view, dbw)
 
-        saveButton.setOnClickListener {
-
-            try {
-                limiteVelocitaInt = limiteVelocitaEt.getText().toString().toInt()
-            }catch(e: Exception){
-                print("cannot cast value")
-
-            }
-            val entrata = stazioneEntrataEt.text.toString()
-            val uscita = stazioneUscitaEt.text.toString()
-            val cursor = dbw?.query("TUTOR", null, "STAZIONE_ENTRATA='$entrata' and STAZIONE_USCITA='$uscita'", null, null, null, null)
-            if(cursor?.count != 0){
-                cursor?.moveToNext()
-
-                DBHelper.updateTutorInsertView(
-                    dbw,
-                    stazioneEntrataEt.text.toString(),
-                    tutorAttivoSw.isChecked,
-                    limiteVelocitaInt
-                )
-            }
-            else{
-                // new tutor
-                DBHelper.insertTutor(
-                    dbw,
-                    stazioneEntrataEt.text.toString(),
-                    stazioneUscitaEt.text.toString(),
-                    tutorAttivoSw.isChecked,
-                    limiteVelocitaInt
-                )
-
-
-            }
-            cursor!!.close()
-        }
+        val scrollView = view.findViewById<ScrollView>(R.id.insert_scroll_lay_id)
+        scrollView.invalidate()
+        scrollView.requestLayout()
 
         return view
     }

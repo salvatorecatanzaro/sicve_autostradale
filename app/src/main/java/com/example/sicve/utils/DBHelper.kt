@@ -173,7 +173,7 @@ class DBHelper(context: Context?) :
             stazioneEntrata: String,
             stazioneUscita: String,
             tutorAttivo: Boolean,
-            limiteVelocita: Int
+            limiteVelocitaList: MutableList<Int>
         ) {
 
              var values = ContentValues().apply{
@@ -193,18 +193,19 @@ class DBHelper(context: Context?) :
             val tutorId = dbw.insert("TUTOR",  null, values)
 
             //aggiungo un nuovo autovelox che si riferisce a quel tutor
-            values = ContentValues().apply {
-                put("LIMITE_VELOCITA", limiteVelocita)
-                put("TUTOR_FK", stazioneEntrata)
-            }
+            for(limiteAutovelox in limiteVelocitaList) {
+                values = ContentValues().apply {
+                    put("LIMITE_VELOCITA", limiteAutovelox)
+                    put("TUTOR_FK", stazioneEntrata)
+                }
 
-            val autoveloxId = dbw.insert("AUTOVELOX", null, values)
-            //aggiungo un nuovo computer che si riferisce a quel tutor
-            values = ContentValues().apply{
-                put("AUTOVELOX_FK", autoveloxId)
+                val autoveloxId = dbw.insert("AUTOVELOX", null, values)
+                //aggiungo un nuovo computer che si riferisce a quel tutor
+                values = ContentValues().apply {
+                    put("AUTOVELOX_FK", autoveloxId)
+                }
+                val computerId = dbw.insert("COMPUTER", null, values)
             }
-            val computerId = dbw.insert("COMPUTER", null, values)
-
         }
 
         fun deleteAutoveloxById(dbw: SQLiteDatabase, id: Int) {
