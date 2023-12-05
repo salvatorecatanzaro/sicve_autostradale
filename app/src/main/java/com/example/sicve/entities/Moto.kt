@@ -8,7 +8,7 @@ class Moto(
     var numeroRuote : Int,
     var casaAutomobilistica : String,
     var velocitaMassimaVeicolo : Int,
-) : Veicolo(targa, numeroRuote, casaAutomobilistica, velocitaMassimaVeicolo) {
+) : Veicolo() {
     override fun entraInAutostrada() {
         print("Il veicolo è entrato in autostrada")
     }

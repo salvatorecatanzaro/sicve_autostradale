@@ -42,7 +42,7 @@ class WalkHighwayFragment : Fragment() {
             // Building button needed to check whether the user wants to receive messges or not
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
             val linearLayout = LinearLayout(view.context)
-            linearLayout.layoutParams = Utils.getLayoutParams(2)
+            linearLayout.layoutParams = Utils.getLayoutParams(40, 0, 20, 0, true, 0, 0)
             val messaggiAttivi = SwitchCompat(view.context)
             linearLayout.addView(messaggiAttivi)
             messaggiAttivi.text = "Messaggi attivi?"
