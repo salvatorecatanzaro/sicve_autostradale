@@ -50,6 +50,7 @@ class InsertFragment : Fragment() {
 
         }
         val dbw = db.writableDatabase
+        dbw.execSQL("PRAGMA foreign_keys=ON");
         val values = ContentValues().apply{
             put("NAME", "Main")
         }
