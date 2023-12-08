@@ -12,7 +12,6 @@ class AdminActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_admin)
         getSupportActionBar()?.hide()
-
         val intent = getIntent()
         val username = intent.getStringExtra("username")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)

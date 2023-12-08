@@ -1,6 +1,7 @@
 package com.example.sicve.utils
 
 import android.content.Context
+import android.content.DialogInterface
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Typeface
 import android.view.View
@@ -11,11 +12,15 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
+import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ConcreteAutoBuilder
 import com.example.sicve.entities.ConcreteCamionBuilder
 import com.example.sicve.entities.ConcreteMotoBuilder
+import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
 import com.example.sicve.entities.Veicolo
@@ -245,6 +250,15 @@ class Utils {
         }
 
 
+        private fun validFields(mutableListOf: MutableList<String>): Boolean {
+            for(s in mutableListOf)
+            {
+                if(s == "")
+                    return false
+            }
+            return true
+        }
+
         fun generateInsertTutorForm(view: View?, dbw: SQLiteDatabase?) {
             val insertTutorMap = mutableMapOf<String, Any?>(
                 "tutor_attivo" to null,
@@ -261,14 +275,46 @@ class Utils {
             buttonSave.layoutParams = getLayoutParams(50, 30, 0, 0, false, 80, 80)
             buttonSave.setBackgroundResource(R.drawable.ic_save)
             buttonSave.setOnClickListener{
-                // TODO Add checks to these values, none of them should be null or empty. Number must be numbers
                 val tmpList = mutableListOf<Int>()
                 val tmpStazioneEntrata = (insertTutorMap["stazione_entrata"] as EditText).text.toString()
                 val tmpStazioneUscita = (insertTutorMap["stazione_uscita"] as EditText).text.toString()
                 val isChecked = (insertTutorMap["tutor_attivo"] as SwitchCompat).isChecked()
+                if(!validFields(mutableListOf(tmpStazioneEntrata, tmpStazioneUscita))){
+                    ErrorDialog(
+                        ErrorConstants.ALL_FIELD_MUST_BE_FILLED,
+                        view.context
+                        )
+                    return@setOnClickListener  // On error do nothing
+
+                }
+                val autoveloxList = insertTutorMap["limite_autovelox"] as MutableList<EditText>
+                if(autoveloxList.size == 0)
+                {
+                    ErrorDialog(
+                        ErrorConstants.NO_AUTOVELOX_ADDED,
+                        view.context,
+                        )
+                    return@setOnClickListener  // On error do nothing
+                }
                 for(autoveloxView in (insertTutorMap["limite_autovelox"] as MutableList<EditText>))
                 {
-                    tmpList.add(autoveloxView.text.toString().toInt())
+                    try {
+                        val autoveloxTmpTxtVal = autoveloxView.text.toString()
+                        if(autoveloxTmpTxtVal == "") {
+                            ErrorDialog(
+                                ErrorConstants.EMPTY_AUTOVELOX_FIELD,
+                                view.context
+                            )
+                            return@setOnClickListener  // On error do nothing
+                        }
+                        tmpList.add(autoveloxTmpTxtVal.toInt())
+                    }catch(e: Exception){
+                        ErrorDialog(
+                            ErrorConstants.NON_INT_AUTOVELOX_FIELD,
+                            view.context
+                        )
+                        return@setOnClickListener  // On error do nothing
+                    }
                 }
                 DBHelper.insertTutor(
                     dbw!!,
@@ -288,7 +334,7 @@ class Utils {
             linearLayout1.addView(stazioneEntrataView)
             val stazioneEntrataViewEdit = createEditTextView("", true, view.context)
             stazioneEntrataViewEdit.layoutParams = getLayoutParams(50, 10, 0, 0, false, 500, 120)
-            insertTutorMap["stazione_uscita"] = stazioneEntrataViewEdit
+            insertTutorMap["stazione_entrata"] = stazioneEntrataViewEdit
             linearLayout1.addView(stazioneEntrataViewEdit)
 
             val linearLayout2 = LinearLayout(view.context)
@@ -297,7 +343,7 @@ class Utils {
             linearLayout2.addView(stazioneUscitaView)
             val stazioneUscitaViewEdit = createEditTextView("", true, view.context)
             stazioneUscitaViewEdit.layoutParams = getLayoutParams(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, NOME_STAZIONE_USCITA), 10, 0, 0, false, 500, 120)
-            insertTutorMap["stazione_entrata"] = stazioneUscitaViewEdit
+            insertTutorMap["stazione_uscita"] = stazioneUscitaViewEdit
             linearLayout2.addView(stazioneUscitaViewEdit)
 
             val linearLayout3 = LinearLayout(view.context)
@@ -350,8 +396,6 @@ class Utils {
                 linearLayout.addView(computerView)
                 linearLayoutContainer.addView(linearLayout)
             }
-
-
         }
 
         private fun updateTutor(highWayBlock: HighwayBlock, tutorMap: MutableMap<String, Any>?) {
@@ -593,6 +637,7 @@ class Utils {
             result.text = s
             return result
         }
+
     }
 
 }

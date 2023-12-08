@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
             val errorText = result.entries.iterator().next().key
             if(result.contains("Success")) {
                 startActivity(intent)
+                finish()
             }
             else {
                 val errorTextview = findViewById<TextView>(R.id.error_message)
