@@ -4,8 +4,11 @@ import android.database.sqlite.SQLiteDatabase
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
+import androidx.appcompat.app.AlertDialog
+import com.example.sicve.constants.AlertConstants
 import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ErrorDialog
+import com.example.sicve.entities.MessageDialog
 import com.example.sicve.entities.User
 
 class ButtonRegister: ButtonOperations {
@@ -38,7 +41,7 @@ class ButtonRegister: ButtonOperations {
             )
             return  // On error do nothing
         }
-        val user = User(listOf(tmpName, tmpSurname, tmpUsername, tmpUsername, tmpPassword, tmpRole))
+        val user = User(listOf(tmpName, tmpSurname, tmpUsername, tmpPassword, tmpRole))
         try
         {
             DBHelper.insertUser(dbw, user)
@@ -50,6 +53,8 @@ class ButtonRegister: ButtonOperations {
                 view.context
             )
         }
+        val alert = MessageDialog(view.context, AlertConstants.SAVE_SUCCESS)
+        alert.showChoiceDialog()
     }
 
     override fun deleteOperation(

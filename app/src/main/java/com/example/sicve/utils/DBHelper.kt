@@ -154,7 +154,7 @@ class DBHelper(context: Context?) :
             dbw: SQLiteDatabase,
             tutor: Tutor
         ) {
-
+            dbw.beginTransaction()
             var values = ContentValues().apply{
                 put("ATTIVO", if (tutor.attivo) 1 else 0)
                 put("STAZIONE_ENTRATA", tutor.stazioneEntrata)
@@ -163,14 +163,25 @@ class DBHelper(context: Context?) :
             }
 
             val tutorId = dbw.update("TUTOR",  values, "STAZIONE_ENTRATA='${tutor.stazioneEntrata}'", null)
-
+            if(tutorId == -1)
+            {
+                dbw.endTransaction()
+                throw Exception("Error while saving tutor")
+            }
             for(autovelox in tutor.listaAutovelox) {
                 values = ContentValues().apply {
                     put("LIMITE_VELOCITA", autovelox.limiteVelocita)
                 }
 
-                dbw.update("AUTOVELOX", values, "ID=${autovelox.id} AND TUTOR_FK='${tutor.stazioneEntrata}'", null)
+                val autoveloxId = dbw.update("AUTOVELOX", values, "ID=${autovelox.id} AND TUTOR_FK='${tutor.stazioneEntrata}'", null)
+                if(autoveloxId == -1)
+                {
+                    dbw.endTransaction()
+                    throw Exception("Error while saving autovelox")
+                }
             }
+            dbw.setTransactionSuccessful()
+            dbw.endTransaction()
         }
 
         fun deleteHighwayBlockModifyView(
@@ -190,8 +201,8 @@ class DBHelper(context: Context?) :
             tutorAttivo: Boolean,
             limiteVelocitaList: MutableList<Int>
         ) {
-
-             var values = ContentValues().apply{
+            dbw.beginTransaction()
+            var values = ContentValues().apply{
                 put("HIGHWAY_FK", 1)
             }
 
@@ -206,7 +217,11 @@ class DBHelper(context: Context?) :
             }
 
             val tutorId = dbw.insert("TUTOR",  null, values)
-
+            if(tutorId.toInt() == -1)
+            {
+                dbw.endTransaction()
+                throw Exception("Error while saving data")
+            }
             //aggiungo un nuovo autovelox che si riferisce a quel tutor
             for(limiteAutovelox in limiteVelocitaList) {
                 values = ContentValues().apply {
@@ -215,11 +230,23 @@ class DBHelper(context: Context?) :
                 }
 
                 val autoveloxId = dbw.insert("AUTOVELOX", null, values)
+                if(autoveloxId.toInt() == -1)
+                {
+                    dbw.endTransaction()
+                    throw Exception("Error while saving data")
+                }
                 //aggiungo un nuovo computer che si riferisce a quel tutor
                 values = ContentValues().apply {
                     put("AUTOVELOX_FK", autoveloxId)
                 }
                 val computerId = dbw.insert("COMPUTER", null, values)
+                if(computerId.toInt() == -1)
+                {
+                    dbw.endTransaction()
+                    throw Exception("Error while saving data")
+                }
+                dbw.setTransactionSuccessful()
+                dbw.endTransaction()
             }
         }
 

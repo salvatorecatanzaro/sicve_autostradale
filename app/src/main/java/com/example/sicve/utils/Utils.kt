@@ -13,13 +13,16 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
+import com.example.sicve.constants.AlertConstants
 import com.example.sicve.entities.ConcreteAutoBuilder
 import com.example.sicve.entities.ConcreteCamionBuilder
 import com.example.sicve.entities.ConcreteMotoBuilder
 import com.example.sicve.entities.HighwayBlock
+import com.example.sicve.entities.MessageDialog
 import com.example.sicve.entities.Tutor
 import com.example.sicve.entities.Veicolo
 import com.example.sicve.entities.VeicoloBuilder
+import kotlinx.coroutines.sync.Semaphore
 
 class Utils {
 
@@ -122,9 +125,8 @@ class Utils {
             buttonSave.setBackgroundResource(R.drawable.ic_save)
             buttonSave.id = View.generateViewId()
             buttonSave.setOnClickListener{
-                updateTutor(highWayBlock, formMap.get(buttonSave.id))
-                DBHelper.updateTutorModifyView(dbw, highWayBlock.tutor!!)
-
+                val buttonEditSave = ButtonEditSave()
+                buttonEditSave.updateTutor(highWayBlock, formMap.get(buttonSave.id), view, dbw)
             }
 
             val buttonDelete = Button(view.context)
@@ -337,20 +339,6 @@ class Utils {
             }
         }
 
-        private fun updateTutor(highWayBlock: HighwayBlock, tutorMap: MutableMap<String, Any>?) {
-            highWayBlock.tutor!!.stazioneEntrata = (tutorMap!!["stazione_entrata"] as EditText).text.toString()
-            highWayBlock.tutor!!.stazioneUscita = (tutorMap["stazione_uscita"] as EditText).text.toString()
-            highWayBlock.tutor!!.attivo = (tutorMap["tutor_attivo"] as SwitchCompat).isChecked()
-            highWayBlock.tutor!!.stazioneEntrata = (tutorMap["stazione_entrata"] as EditText).text.toString()
-            for(autovelox in highWayBlock.tutor!!.listaAutovelox){
-                if(tutorMap[autovelox.id.toString()] != null)
-                {
-                    autovelox.limiteVelocita = (tutorMap[autovelox.id.toString()] as TextView).text.toString().toInt()
-                }
-            }
-        }
-
-
         fun getLayoutParams(left: Int, top: Int, right: Int, bottom: Int, wrap: Boolean, width: Int, height: Int) : LinearLayout.LayoutParams{
             /**
              *  Used to create Layout parameters
@@ -553,7 +541,7 @@ class Utils {
             passwordTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
             val passwordEditTextView = createEditTextView("", true, view.context)
             passwordEditTextView.layoutParams = getLayoutParams(110, 10, 5, 0, false, 400, 120)
-            formMap["password"] = cognomeEditTextView
+            formMap["password"] = passwordEditTextView
             linearLayout3.addView(passwordTextView)
             linearLayout3.addView(passwordEditTextView)
             linearLayoutContainer.addView(linearLayout3)

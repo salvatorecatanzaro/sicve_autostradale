@@ -4,8 +4,10 @@ import android.database.sqlite.SQLiteDatabase
 import android.view.View
 import android.widget.EditText
 import androidx.appcompat.widget.SwitchCompat
+import com.example.sicve.constants.AlertConstants
 import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ErrorDialog
+import com.example.sicve.entities.MessageDialog
 
 class ButtonInsert: ButtonOperations {
     override fun saveOperation(view: View, formMap: MutableMap<String, Any?>, dbw: SQLiteDatabase) {
@@ -51,13 +53,26 @@ class ButtonInsert: ButtonOperations {
                 return  // On error do nothing
             }
         }
-        DBHelper.insertTutor(
-            dbw,
-            tmpStazioneEntrata,
-            tmpStazioneUscita,
-            isChecked,
-            tmpList
-        )
+        try {
+            DBHelper.insertTutor(
+                dbw,
+                tmpStazioneEntrata,
+                tmpStazioneUscita,
+                isChecked,
+                tmpList
+            )
+        }
+        catch (e: Exception)
+        {
+            ErrorDialog(
+                ErrorConstants.ERROR_WHILE_SAVING_DATA,
+                view.context
+            )
+            return  // On error do nothing
+        }
+
+        val message = MessageDialog(view.context, AlertConstants.SAVE_SUCCESS)
+        message.showChoiceDialog()
     }
 
     override fun deleteOperation(view: View, formMap: MutableMap<String, Any?>, dbw: SQLiteDatabase) {

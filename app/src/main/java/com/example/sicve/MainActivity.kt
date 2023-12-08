@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         val buttonRegiter = findViewById<Button>(R.id.button_reset)
         val buttonSubmit = findViewById<Button>(R.id.button_submit)
         val db = DBHelper(this)
-        var initDb = true
+        var initDb = false
         if(initDb) {
             this.deleteDatabase("sicve")
         }
