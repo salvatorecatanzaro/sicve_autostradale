@@ -37,14 +37,16 @@ class MessagesFragment : Fragment() {
         var messages: MutableList<String> = mutableListOf()
         val tables = arrayOf("AUTO", "MOTO", "CAMION")
         while(counter < 3 && messages.isEmpty()) {
-            val cursor =  dbw?.query(tables[counter], null, "USER_FK='${this.username}'", null, null, null, null)
-            if(cursor!!.count == 0){
-                print("")
+            val tipoVeicolo = tables[counter]
+            val cursor =  dbw?.query(tipoVeicolo, null, "USER_FK='${this.username}'", null, null, null, null)
+            if(cursor!!.count == 0) {
+                cursor.close()
+                counter += 1
+                continue
+
             }
-            else{
-                cursor.moveToNext()
-                messages = DBHelper.getMessages(dbw, cursor.getString(0))
-            }
+            cursor.moveToNext()
+            messages = DBHelper.getMessages(dbw, tipoVeicolo, cursor.getString(0))
             cursor.close()
             counter += 1
         }

@@ -8,7 +8,9 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.sicve.login.HardCodedCredentialsAuthentication
+import com.example.sicve.login.SQLiteAuthentication
 import com.example.sicve.login.UserAuthentication
+import com.example.sicve.utils.DBHelper
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,21 +20,25 @@ class MainActivity : AppCompatActivity() {
         // get reference to all views
         val username = findViewById<EditText>(R.id.stazione_entrata)
         val password = findViewById<EditText>(R.id.password)
-        val buttonReset = findViewById<Button>(R.id.button_reset)
+        val buttonRegiter = findViewById<Button>(R.id.button_reset)
         val buttonSubmit = findViewById<Button>(R.id.button_submit)
-
-        buttonReset.setOnClickListener {
-            // clearing user_name and password edit text views on reset button click
-            username.setText("")
-            password.setText("")
+        val db = DBHelper(this)
+        var initDb = true
+        if(initDb) {
+            this.deleteDatabase("sicve")
+        }
+        val dbw = db.writableDatabase
+        buttonRegiter.setOnClickListener {
+            val intent = Intent(this, RegisterActivity::class.java)
+            startActivity(intent)
         }
 
         buttonSubmit.setOnClickListener {
             // clearing user_name and password edit text views on reset button click
             val intent: Intent
 
-            val auth : UserAuthentication = HardCodedCredentialsAuthentication(username=username.getText().toString(), password=password.getText().toString())
-            val result = auth.login()
+            val auth : UserAuthentication = SQLiteAuthentication(username=username.getText().toString(), password=password.getText().toString())
+            val result = auth.login(dbw)
             val ruolo = result.values.iterator().next().ruolo
 
             intent = if(ruolo.lowercase() == "admin") Intent(this, AdminActivity::class.java) else Intent(this, UserActivity::class.java)

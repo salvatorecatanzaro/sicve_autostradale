@@ -49,6 +49,7 @@ class WalkHighwayFragment : Fragment() {
             linearLayoutContainer.addView(linearLayout)
             var counter = 0
             var targa = ""
+            var tipoVeicolo = ""
             val tables = arrayOf("AUTO", "MOTO", "CAMION")
             var velMassima = 0
             while(counter < 3 && targa == "") {
@@ -59,12 +60,14 @@ class WalkHighwayFragment : Fragment() {
                 else {
                     cursor.moveToNext()
                     targa = cursor.getString(0)
+
                     if (tables[counter] == "MOTO") {
                         velMassima = cursor.getInt(4)
-
+                        tipoVeicolo = cursor.getString(3)
                     }
                     else{
                         velMassima = cursor.getInt(5)
+                        tipoVeicolo = cursor.getString(4)
                     }
 
 
@@ -74,8 +77,7 @@ class WalkHighwayFragment : Fragment() {
             }
             for(highWayBlock in highway?.highwayBlock.orEmpty())
             {
-
-                Utils.generateMessagesView(highWayBlock, view, targa, velMassima, dbw, messaggiAttivi)
+                Utils.generateMessagesView(highWayBlock, view, targa, tipoVeicolo, velMassima, dbw, messaggiAttivi)
             }
 
             val scrollView = view.findViewById<ScrollView>(R.id.transit_scroll_lay_id)

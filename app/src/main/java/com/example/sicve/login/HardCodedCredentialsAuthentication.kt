@@ -1,5 +1,6 @@
 package com.example.sicve.login
 
+import android.database.sqlite.SQLiteDatabase
 import com.example.sicve.entities.User
 
 class HardCodedCredentialsAuthentication(username : String, password : String) :  UserAuthentication() {
@@ -7,7 +8,7 @@ class HardCodedCredentialsAuthentication(username : String, password : String) :
     private var pwd: String = password
 
 
-    override fun login(): Map<String, User> {
+    override fun login(dbw: SQLiteDatabase): Map<String, User> {
         val lineList = mutableListOf("admin admin admin admin ADMIN", "utente utente utente utente UTENTE")
         val nonexistinguser = User("not not not not NOT".split(" "))
         for (it: String in lineList) {

@@ -1,7 +1,6 @@
 package com.example.sicve.utils
 
 import android.content.Context
-import android.content.DialogInterface
 import android.database.sqlite.SQLiteDatabase
 import android.graphics.Typeface
 import android.view.View
@@ -12,15 +11,11 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
-import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ConcreteAutoBuilder
 import com.example.sicve.entities.ConcreteCamionBuilder
 import com.example.sicve.entities.ConcreteMotoBuilder
-import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Tutor
 import com.example.sicve.entities.Veicolo
@@ -157,7 +152,7 @@ class Utils {
         }
 
 
-        fun generateMessagesView(highWayBlock: HighwayBlock?, view: View, targa: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
+        fun generateMessagesView(highWayBlock: HighwayBlock?, view: View, targa: String, tipoVeicolo: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
@@ -182,7 +177,7 @@ class Utils {
             buttonTransitHighway.setOnClickListener{
                 val multe = mutableListOf<String>()
                 if(messaggiAttivi.isChecked)
-                    DBHelper.insertMessage(targa, tutor, dbw, "")
+                    DBHelper.insertMessage(targa, tipoVeicolo, tutor, dbw, "")
 
                 var autoveloxCount = 0
                 var autoveloxSum = 0
@@ -194,7 +189,7 @@ class Utils {
                     if( velCorrente > autovelox.limiteVelocita) {
                         val msg = "Multa per aver superato il limite di velocità. velocita corrente: $velCorrente all'autovelox con id ${autovelox.id}"
                         multe.add(msg)
-                        DBHelper.insertMessage(targa, tutor, dbw, msg)
+                        DBHelper.insertMessage(targa, tipoVeicolo, tutor, dbw, msg)
                     }
                     autoveloxCount += 1
                     autoveloxSum += autovelox.limiteVelocita
@@ -249,16 +244,6 @@ class Utils {
             linearLayoutContainer.addView(linearLayout0)
         }
 
-
-        private fun validFields(mutableListOf: MutableList<String>): Boolean {
-            for(s in mutableListOf)
-            {
-                if(s == "")
-                    return false
-            }
-            return true
-        }
-
         fun generateInsertTutorForm(view: View?, dbw: SQLiteDatabase?) {
             val insertTutorMap = mutableMapOf<String, Any?>(
                 "tutor_attivo" to null,
@@ -275,54 +260,8 @@ class Utils {
             buttonSave.layoutParams = getLayoutParams(50, 30, 0, 0, false, 80, 80)
             buttonSave.setBackgroundResource(R.drawable.ic_save)
             buttonSave.setOnClickListener{
-                val tmpList = mutableListOf<Int>()
-                val tmpStazioneEntrata = (insertTutorMap["stazione_entrata"] as EditText).text.toString()
-                val tmpStazioneUscita = (insertTutorMap["stazione_uscita"] as EditText).text.toString()
-                val isChecked = (insertTutorMap["tutor_attivo"] as SwitchCompat).isChecked()
-                if(!validFields(mutableListOf(tmpStazioneEntrata, tmpStazioneUscita))){
-                    ErrorDialog(
-                        ErrorConstants.ALL_FIELD_MUST_BE_FILLED,
-                        view.context
-                        )
-                    return@setOnClickListener  // On error do nothing
-
-                }
-                val autoveloxList = insertTutorMap["limite_autovelox"] as MutableList<EditText>
-                if(autoveloxList.size == 0)
-                {
-                    ErrorDialog(
-                        ErrorConstants.NO_AUTOVELOX_ADDED,
-                        view.context,
-                        )
-                    return@setOnClickListener  // On error do nothing
-                }
-                for(autoveloxView in (insertTutorMap["limite_autovelox"] as MutableList<EditText>))
-                {
-                    try {
-                        val autoveloxTmpTxtVal = autoveloxView.text.toString()
-                        if(autoveloxTmpTxtVal == "") {
-                            ErrorDialog(
-                                ErrorConstants.EMPTY_AUTOVELOX_FIELD,
-                                view.context
-                            )
-                            return@setOnClickListener  // On error do nothing
-                        }
-                        tmpList.add(autoveloxTmpTxtVal.toInt())
-                    }catch(e: Exception){
-                        ErrorDialog(
-                            ErrorConstants.NON_INT_AUTOVELOX_FIELD,
-                            view.context
-                        )
-                        return@setOnClickListener  // On error do nothing
-                    }
-                }
-                DBHelper.insertTutor(
-                    dbw!!,
-                    tmpStazioneEntrata,
-                    tmpStazioneUscita,
-                    isChecked,
-                    tmpList
-                )
+                val buttonSaveOperation = ButtonInsert()
+                buttonSaveOperation.saveOperation(view, insertTutorMap, dbw!!)
             }
             insertTutorMap["tutor_attivo"] = tutorAttivoView
             linearLayout0.addView(tutorAttivoView)
@@ -447,69 +386,29 @@ class Utils {
 
             popTmpMap(tmpValuesMap, username, dbw!!)
 
-
             var linearLayout = LinearLayout(view.context)
-            val targaTextView = TextView(view.context)
-            targaTextView.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            targaTextView.text = "Targa"
-
-            val targaEditTextView = EditText(view.context)
-            targaEditTextView.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            targaEditTextView.setText(tmpValuesMap["targa"])
+            val targaTextView = createTextView("Targa", view.context)
+            targaTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val targaEditTextView = createEditTextView(tmpValuesMap["targa"]!!, true, view.context)
+            targaEditTextView.layoutParams = getLayoutParams(255, 10, 5, 0, false, 400, 120)
             linearLayout.addView(targaTextView)
             linearLayout.addView(targaEditTextView)
             linearLayoutContainer.addView(linearLayout)
 
             var linearLayout3 = LinearLayout(view.context)
-            val velocitaMassimaView = TextView(view.context)
-            velocitaMassimaView.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            velocitaMassimaView.text = "Velocita massima"
-
-            val velocitaMassimaEditText = EditText(view.context)
-            velocitaMassimaEditText.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            velocitaMassimaEditText.setText(tmpValuesMap["velocita_massima"])
+            val velocitaMassimaView = createTextView("Velocita massima", view.context)
+            velocitaMassimaView.layoutParams = getLayoutParams(20, 10, 0, 0, true, 0, 0)
+            val velocitaMassimaEditText = createEditTextView(tmpValuesMap["velocita_massima"]!!, true, view.context)
+            velocitaMassimaEditText.layoutParams = getLayoutParams(50, 10, 0, 0, false, 400, 120)
             linearLayout3.addView(velocitaMassimaView)
             linearLayout3.addView(velocitaMassimaEditText)
             linearLayoutContainer.addView(linearLayout3)
 
             var linearLayout1 = LinearLayout(view.context)
-            val casaAutomobilisticaView = TextView(view.context)
-            casaAutomobilisticaView.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            casaAutomobilisticaView.text = "Casa automobilistica"
-
-            val casaAutomobilisticaViewEdit = EditText(view.context)
-            casaAutomobilisticaViewEdit.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            casaAutomobilisticaViewEdit.setText(tmpValuesMap["casa_automobilistica"])
+            val casaAutomobilisticaView = createTextView("Casa automobilistica", view.context)
+            casaAutomobilisticaView.layoutParams = getLayoutParams(20, 10, 0, 0, true, 0, 0)
+            val casaAutomobilisticaViewEdit = createEditTextView(tmpValuesMap["casa_automobilistica"]!!, true, view.context)
+            casaAutomobilisticaViewEdit.layoutParams = getLayoutParams(0, 10, 0, 0, false, 400, 120)
             linearLayout1.addView(casaAutomobilisticaView)
             linearLayout1.addView(casaAutomobilisticaViewEdit)
             linearLayoutContainer.addView(linearLayout1)
@@ -521,14 +420,8 @@ class Utils {
                 spinner.setSelection(selectionMap[tmpValuesMap["tipo_veicolo"]]!!)
             val linearLayout2 = LinearLayout(view.context)
 
-            val tipoVeicoloView = TextView(view.context)
-            tipoVeicoloView.setLayoutParams(
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    ViewGroup.LayoutParams.WRAP_CONTENT
-                )
-            )
-            tipoVeicoloView.text = "Tipo veicolo"
+            val tipoVeicoloView = createTextView("Tipo veicolo", view.context)
+            tipoVeicoloView.layoutParams = getLayoutParams(20, 0, 0, 5, true, 0, 0)
             linearLayout2.addView(tipoVeicoloView)
             linearLayout2.addView(spinner)
             linearLayoutContainer.addView(linearLayout2)
@@ -615,6 +508,90 @@ class Utils {
             tmpValuesMap.put("casa_automobilistica", casaAutomobilisticaTmp)
         }
 
+        fun generateRegisterForm(view: View, dbw: SQLiteDatabase) {
+            val formMap = mutableMapOf<String, Any?>(
+                "username" to null,
+                "nome" to null,
+                "cognome" to null,
+                "password" to null,
+                "repeat_password" to null,
+                "ruolo" to null,
+            )
+            val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.linear_lay_id_register)
+            val linearLayout = LinearLayout(view.context)
+            val usernameTextView = createTextView("Username", view.context)
+            usernameTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val usernameEditTextView = createEditTextView("", true, view.context)
+            usernameEditTextView.layoutParams = getLayoutParams(100, 10, 5, 0, false, 400, 120)
+            formMap["username"] = usernameEditTextView
+            linearLayout.addView(usernameTextView)
+            linearLayout.addView(usernameEditTextView)
+            linearLayoutContainer.addView(linearLayout)
+
+            val linearLayout1 = LinearLayout(view.context)
+            val nomeTextView = createTextView("Nome", view.context)
+            nomeTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val nomeEditTextView = createEditTextView("", true, view.context)
+            nomeEditTextView.layoutParams = getLayoutParams(170, 10, 5, 0, false, 400, 120)
+            formMap["nome"] = nomeEditTextView
+            linearLayout1.addView(nomeTextView)
+            linearLayout1.addView(nomeEditTextView)
+            linearLayoutContainer.addView(linearLayout1)
+
+            val linearLayout2 = LinearLayout(view.context)
+            val cognomeTextView = createTextView("Cognome", view.context)
+            cognomeTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val cognomeEditTextView = createEditTextView("", true, view.context)
+            cognomeEditTextView.layoutParams = getLayoutParams(110, 10, 5, 0, false, 400, 120)
+            formMap["cognome"] = cognomeEditTextView
+            linearLayout2.addView(cognomeTextView)
+            linearLayout2.addView(cognomeEditTextView)
+            linearLayoutContainer.addView(linearLayout2)
+
+            val linearLayout3 = LinearLayout(view.context)
+            val passwordTextView = createTextView("Password", view.context)
+            passwordTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val passwordEditTextView = createEditTextView("", true, view.context)
+            passwordEditTextView.layoutParams = getLayoutParams(110, 10, 5, 0, false, 400, 120)
+            formMap["password"] = cognomeEditTextView
+            linearLayout3.addView(passwordTextView)
+            linearLayout3.addView(passwordEditTextView)
+            linearLayoutContainer.addView(linearLayout3)
+
+            val linearLayout4 = LinearLayout(view.context)
+            val repeatPasswordTextView = createTextView("Ripeti Password", view.context)
+            repeatPasswordTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val repeatPasswordEditTextView = createEditTextView("", true, view.context)
+            repeatPasswordEditTextView.layoutParams = getLayoutParams(5, 10, 5, 0, false, 400, 120)
+            formMap["repeat_password"] = repeatPasswordEditTextView
+            linearLayout4.addView(repeatPasswordTextView)
+            linearLayout4.addView(repeatPasswordEditTextView)
+            linearLayoutContainer.addView(linearLayout4)
+
+            val linearLayout5 = LinearLayout(view.context)
+            val ruoloTextView = createTextView("Ruolo", view.context)
+            ruoloTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            val spinner = Spinner(view.context)
+            val spinnerData = arrayOf("ADMIN", "UTENTE")
+            spinner.adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_dropdown_item, spinnerData)
+            formMap["ruolo"] = spinner
+            linearLayout5.addView(ruoloTextView)
+            linearLayout5.addView(spinner)
+            linearLayoutContainer.addView(linearLayout5)
+
+            val linearLayout6 = LinearLayout(view.context)
+            val buttonSave = Button(view.context)
+            buttonSave.layoutParams = getLayoutParams(40, 0, 10, 0, true, 80, 80)
+            buttonSave.text = "Save"
+            buttonSave.id = View.generateViewId()
+            buttonSave.setOnClickListener{
+                val buttonRegister = ButtonRegister()
+                buttonRegister.saveOperation(view, formMap, dbw)
+            }
+            linearLayout6.addView(buttonSave)
+            linearLayoutContainer.addView(linearLayout6)
+
+        }
         private fun createSwitchCompat(s: String, attivo: Boolean, context: Context): SwitchCompat {
             val result = SwitchCompat(context)
             result.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
@@ -637,6 +614,8 @@ class Utils {
             result.text = s
             return result
         }
+
+
 
     }
 

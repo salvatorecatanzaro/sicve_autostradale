@@ -16,6 +16,10 @@
             android:name=".UserActivity"
             android:exported="false"
             android:theme="@style/Theme.AppCompat" />
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.AppCompat" />
 
         <activity
             android:name=".AdminActivity"

@@ -10,6 +10,7 @@ import com.example.sicve.entities.Camion
 import com.example.sicve.entities.HighwayBlock
 import com.example.sicve.entities.Moto
 import com.example.sicve.entities.Tutor
+import com.example.sicve.entities.User
 import java.util.Date
 
 
@@ -79,17 +80,24 @@ class DBHelper(context: Context?) :
                 "TUTOR_FK TEXT NOT NULL," +
                 "CONSTRAINT FK FOREIGN KEY(TUTOR_FK) REFERENCES TUTOR(STAZIONE_ENTRATA) ON DELETE CASCADE)"
 
-        val carTransitMessage = "CREATE TABLE MESSAGE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+        val carTransitMessage = "CREATE TABLE AUTO_MESSAGE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "MESSAGE TEXT NOT NULL," +
                 "TARGA_FK TEXT NOT NULL," +
-                "CONSTRAINT FK FOREIGN KEY(TARGA_FK) REFERENCES TUTOR(TARGA) ON DELETE CASCADE)"
+                "CONSTRAINT FK FOREIGN KEY(TARGA_FK) REFERENCES AUTO(TARGA) ON DELETE CASCADE)"
 
+        val motoTransitMessage = "CREATE TABLE MOTO_MESSAGE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "MESSAGE TEXT NOT NULL," +
+                "TARGA_FK TEXT NOT NULL," +
+                "CONSTRAINT FK FOREIGN KEY(TARGA_FK) REFERENCES CAMION(TARGA) ON DELETE CASCADE)"
+        val camionTransitMessage = "CREATE TABLE CAMION_MESSAGE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "MESSAGE TEXT NOT NULL," +
+                "TARGA_FK TEXT NOT NULL," +
+                "CONSTRAINT FK FOREIGN KEY(TARGA_FK) REFERENCES MOTO(TARGA) ON DELETE CASCADE)"
         val createUser = "CREATE TABLE  USER (" + "USERNAME TEXT PRIMARY KEY," +
                 "NOME TEXT NOT NULL," +
                 "COGNOME TEXT NOT NULL," +
                 "PASSWORD TEXT NOT NULL," +
-                "RUOLO TEXT NOT NULL," +
-                "VELOCITA_MASSIMA_VEICOLO INTEGER NOT NULL)"
+                "RUOLO TEXT NOT NULL)"
 
         val createMulte = "CREATE TABLE  MULTE (" + "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "MESSAGE TEXT NOT NULL," +
@@ -105,6 +113,8 @@ class DBHelper(context: Context?) :
         db.execSQL(createComputer)
         db.execSQL(createAutovelox)
         db.execSQL(carTransitMessage)
+        db.execSQL(camionTransitMessage)
+        db.execSQL(motoTransitMessage)
         db.execSQL(createMulte)
         db.execSQL(createUser)
 
@@ -217,7 +227,7 @@ class DBHelper(context: Context?) :
             dbw.delete("AUTOVELOX", "ID=${id}", null)
         }
 
-        fun insertMessage(targa: String, tutor: Tutor, dbw: SQLiteDatabase, extendedMsg: String) {
+        fun insertMessage(targa: String, tipoVeicolo: String, tutor: Tutor, dbw: SQLiteDatabase, extendedMsg: String) {
 
             val sdf = SimpleDateFormat("dd/M/yyyy hh:mm:ss")
             val currentDate = sdf.format(Date())
@@ -227,13 +237,13 @@ class DBHelper(context: Context?) :
                 put("TARGA_FK", targa)
             }
 
-            val messageId = dbw.insert("MESSAGE",  null, values)
+            val messageId = dbw.insert("${tipoVeicolo}_MESSAGE",  null, values)
         }
 
-        fun getMessages(dbr: SQLiteDatabase, targa: String): MutableList<String>
+        fun getMessages(dbr: SQLiteDatabase, tipoVeicolo: String, targa: String): MutableList<String>
         {
             val messageList = mutableListOf<String>()
-            val cursor = dbr.query("MESSAGE", null, "TARGA_FK='$targa'", null, null, null, null)
+            val cursor = dbr.query("${tipoVeicolo}_MESSAGE", null, "TARGA_FK='$targa'", null, null, null, null)
             if(cursor?.count == 0) {
                 cursor.close()
                 return messageList
@@ -306,6 +316,22 @@ class DBHelper(context: Context?) :
                     put("MESSAGE", multa)
                 }
                 val result = dbw.insert("MULTE", null, values)
+            }
+        }
+
+        fun insertUser(dbw: SQLiteDatabase, user: User) {
+            val values = ContentValues().apply {
+                put("USERNAME", user.username)
+                put("NOME", user.nome)
+                put("COGNOME", user.cognome)
+                put("PASSWORD", user.password)
+                put("RUOLO", user.ruolo)
+            }
+            val result = dbw.insert("USER", null, values)
+
+            if(result.toInt() == -1)
+            {
+                throw Exception("Error while saving data")
             }
         }
 

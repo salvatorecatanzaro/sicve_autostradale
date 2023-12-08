@@ -44,11 +44,6 @@ class InsertFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_insert, container, false)
         val db = DBHelper(view.context)
-        var deleteDb = true
-        if(deleteDb) {
-            view.context.deleteDatabase("sicve")
-
-        }
         val dbw = db.writableDatabase
         dbw.execSQL("PRAGMA foreign_keys=ON");
         val values = ContentValues().apply{
