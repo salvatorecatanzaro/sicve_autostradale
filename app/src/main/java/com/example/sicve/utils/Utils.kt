@@ -1,8 +1,11 @@
 package com.example.sicve.utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -13,16 +16,13 @@ import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
 import com.example.sicve.R
-import com.example.sicve.constants.AlertConstants
-import com.example.sicve.entities.ConcreteAutoBuilder
-import com.example.sicve.entities.ConcreteCamionBuilder
-import com.example.sicve.entities.ConcreteMotoBuilder
+import com.example.sicve.buttons.ButtonEditSave
+import com.example.sicve.buttons.ButtonInsert
+import com.example.sicve.buttons.ButtonRegister
+import com.example.sicve.buttons.ButtonSaveMyVehicle
+import com.example.sicve.buttons.ButtonTransit
 import com.example.sicve.entities.HighwayBlock
-import com.example.sicve.entities.MessageDialog
 import com.example.sicve.entities.Tutor
-import com.example.sicve.entities.Veicolo
-import com.example.sicve.entities.VeicoloBuilder
-import kotlinx.coroutines.sync.Semaphore
 
 class Utils {
 
@@ -91,6 +91,7 @@ class Utils {
                 val limiteVelocitaTextView = createTextView("Limite autovelox ${autovelox.id}", view.context)
                 val limiteVelocitaEditTextView = createEditTextView(autovelox.limiteVelocita.toString(), true, view.context)
                 val buttonDeleteAutovelox = Button(view.context)
+                buttonEffect(buttonDeleteAutovelox)
                 currentTutorMap[autovelox.id.toString()] = limiteVelocitaEditTextView
                 buttonDeleteAutovelox.setOnClickListener{
                     if(autoveloxLinearLayoutList.size == 1)
@@ -124,6 +125,7 @@ class Utils {
             buttonSave.layoutParams = getLayoutParams(40, 0, 10, 0, false, 80, 80)
             buttonSave.setBackgroundResource(R.drawable.ic_save)
             buttonSave.id = View.generateViewId()
+            buttonEffect(buttonSave)
             buttonSave.setOnClickListener{
                 val buttonEditSave = ButtonEditSave()
                 buttonEditSave.updateTutor(highWayBlock, formMap.get(buttonSave.id), view, dbw)
@@ -131,6 +133,7 @@ class Utils {
 
             val buttonDelete = Button(view.context)
             buttonDelete.layoutParams = getLayoutParams(40, 0, 10, 0, false, 80, 80)
+            buttonEffect(buttonDelete)
             buttonDelete.setBackgroundResource(R.drawable.ic_delete)
             buttonDelete.id = View.generateViewId()
             buttonDelete.setOnClickListener{
@@ -154,7 +157,7 @@ class Utils {
         }
 
 
-        fun generateMessagesView(highWayBlock: HighwayBlock?, view: View, targa: String, tipoVeicolo: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
+        fun generateTransitView(highWayBlock: HighwayBlock?, view: View, targa: String, tipoVeicolo: String, velMassima: Int, dbw: SQLiteDatabase, messaggiAttivi: SwitchCompat)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
@@ -174,36 +177,19 @@ class Utils {
             uscita.setTypeface(null, Typeface.BOLD)
             uscita.textSize = 20f
             val buttonTransitHighway = Button(view.context)
+            buttonEffect(buttonTransitHighway)
             buttonTransitHighway.text = "Percorri tratta"
             buttonTransitHighway.id = View.generateViewId()
             buttonTransitHighway.setOnClickListener{
-                val multe = mutableListOf<String>()
-                if(messaggiAttivi.isChecked)
-                    DBHelper.insertMessage(targa, tipoVeicolo, tutor, dbw, "")
-
-                var autoveloxCount = 0
-                var autoveloxSum = 0
-                var velMedia = 0
-                for(autovelox in tutor.listaAutovelox)
-                {
-                    val velCorrente = (80..velMassima).shuffled().last()
-                    velMedia +=  velCorrente
-                    if( velCorrente > autovelox.limiteVelocita) {
-                        val msg = "Multa per aver superato il limite di velocità. velocita corrente: $velCorrente all'autovelox con id ${autovelox.id}"
-                        multe.add(msg)
-                        DBHelper.insertMessage(targa, tipoVeicolo, tutor, dbw, msg)
-                    }
-                    autoveloxCount += 1
-                    autoveloxSum += autovelox.limiteVelocita
-                    if(tutor.listaAutovelox.size == autoveloxCount){
-                        val velocitaMediaLimite = autoveloxSum / tutor.listaAutovelox.size
-                        val velocitaMediaVeicolo = velMedia / tutor.listaAutovelox.size
-                        if(velocitaMediaLimite < velocitaMediaVeicolo)
-                            autovelox.computer.listaMulte.add("Multa per aver superato il limite di velocita media. Velocita media: $velocitaMediaVeicolo velocita media tutor $velocitaMediaLimite")
-
-                    }
-                    autovelox.computer.salvaInfrazioni(autovelox.computer.id, dbw)
-                }
+                val formMap = mutableMapOf(
+                    "messaggi_attivi" to messaggiAttivi,
+                    "targa" to targa,
+                    "tipo_veicolo" to tipoVeicolo,
+                    "tutor" to tutor,
+                    "vel_massima" to velMassima
+                )
+                val buttonTransit = ButtonTransit()
+                buttonTransit.autoveloxChecks(formMap, dbw, view)
             }
             linearLayout0.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
             linearLayout0.addView(entrata)
@@ -234,7 +220,7 @@ class Utils {
 
         }
 
-        fun generateMessagesView(message: String, view: View)
+        fun generateTransitView(message: String, view: View)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.messages_linear_lay_id)
@@ -261,6 +247,7 @@ class Utils {
             val buttonSave = Button(view.context)
             buttonSave.layoutParams = getLayoutParams(50, 30, 0, 0, false, 80, 80)
             buttonSave.setBackgroundResource(R.drawable.ic_save)
+            buttonEffect(buttonSave)
             buttonSave.setOnClickListener{
                 val buttonSaveOperation = ButtonInsert()
                 buttonSaveOperation.saveOperation(view, insertTutorMap, dbw!!)
@@ -292,6 +279,7 @@ class Utils {
             aggiungiAutovelox.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
             linearLayout3.addView(aggiungiAutovelox)
             val buttonAggiungiAutovelox = Button(view.context)
+            buttonEffect(buttonAggiungiAutovelox)
             buttonAggiungiAutovelox.layoutParams = getLayoutParams(50, 10, 0, 0, false, 80, 80)
             buttonAggiungiAutovelox.setBackgroundResource(R.drawable.ic_add)
             linearLayout3.addView(buttonAggiungiAutovelox)
@@ -306,6 +294,7 @@ class Utils {
                 (insertTutorMap["limite_autovelox"] as MutableList<EditText>).add(autoveloxEditTextView)
                 linearLayout4.addView(autoveloxEditTextView)
                 val buttonRimuoviAutovelox = Button(view.context)
+                buttonEffect(buttonRimuoviAutovelox)
                 buttonRimuoviAutovelox.layoutParams = getLayoutParams(50, 10, 0, 0, false, 80, 80)
                 buttonRimuoviAutovelox.setBackgroundResource(R.drawable.ic_delete)
                 buttonRimuoviAutovelox.setOnClickListener{
@@ -416,42 +405,18 @@ class Utils {
 
             var linearLayout5 = LinearLayout(view.context)
             val buttonSaveMyVehicle = Button(view.context)
+            buttonEffect(buttonSaveMyVehicle)
             buttonSaveMyVehicle.text = "Salva"
             buttonSaveMyVehicle.id = View.generateViewId()
             buttonSaveMyVehicle.setOnClickListener{
-                DBHelper.deleteVehicleByFk(dbw, username)
-                val casaAutomobilistica = casaAutomobilisticaViewEdit.text.toString()
-                val targa = targaEditTextView.text.toString()
-                val velocitaMassimaVeicolo = velocitaMassimaEditText.text.toString().toInt()
-                val veicolo: Veicolo
-                var veicoloBuilder: VeicoloBuilder = ConcreteAutoBuilder()
-
-                if(spinner.selectedItem.toString() == "AUTO"){
-                    veicoloBuilder
-                        .numeroRuote(4)
-                        .casaAutomobilistica(casaAutomobilistica)
-                        .targa(targa)
-                        .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
-                }
-                else if(spinner.selectedItem.toString() == "MOTO"){
-                    veicoloBuilder = ConcreteMotoBuilder()
-
-                    veicoloBuilder
-                        .numeroRuote(2)
-                        .casaAutomobilistica(casaAutomobilistica)
-                        .targa(targa)
-                        .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
-                }
-                else if(spinner.selectedItem.toString() == "CAMION"){
-                    veicoloBuilder = ConcreteCamionBuilder()
-                    veicoloBuilder
-                        .numeroRuote(4)
-                        .casaAutomobilistica(casaAutomobilistica)
-                        .targa(targa)
-                        .velocitaMassimaVeicolo(velocitaMassimaVeicolo)
-                }
-                veicolo = veicoloBuilder.build()
-                veicolo.saveVehicle(dbw!!, username!!)
+                val formMap = mutableMapOf<String, Any>(
+                    "casa_automobilistica" to casaAutomobilisticaViewEdit,
+                    "targa" to targaEditTextView,
+                    "velocita_massima" to velocitaMassimaEditText,
+                    "spinner" to spinner
+                )
+                val buttonSave = ButtonSaveMyVehicle()
+                buttonSave.saveMyVehicle(formMap, dbw, username!!, view)
             }
             linearLayout5.layoutParams = getLayoutParams(40, 100, 20, 0, true, 0, 0)
             linearLayout5.addView(buttonSaveMyVehicle)
@@ -569,6 +534,7 @@ class Utils {
 
             val linearLayout6 = LinearLayout(view.context)
             val buttonSave = Button(view.context)
+            buttonEffect(buttonSave)
             buttonSave.layoutParams = getLayoutParams(40, 0, 10, 0, true, 80, 80)
             buttonSave.text = "Save"
             buttonSave.id = View.generateViewId()
@@ -603,7 +569,22 @@ class Utils {
             return result
         }
 
-
+        @SuppressLint("ClickableViewAccessibility")
+        private fun buttonEffect(buttonSave: Button) {
+            buttonSave.setOnTouchListener { v, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        v.background.setColorFilter(-0x1f0b8ccc, PorterDuff.Mode.SRC_ATOP)
+                        v.invalidate()
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        v.background.clearColorFilter()
+                        v.invalidate()
+                    }
+                }
+                false
+            }
+        }
 
     }
 

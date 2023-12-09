@@ -126,30 +126,6 @@ class DBHelper(context: Context?) :
 
     companion object {
 
-
-        fun updateTutorInsertView(
-            dbw: SQLiteDatabase,
-            stazioneEntrata: String,
-            tutorAttivo: Boolean,
-            limiteVelocita: Int
-        ) {
-
-            // Aggiorno stato del tutor attivo/non attivo
-
-            var values = ContentValues().apply{
-                 put("ATTIVO", tutorAttivo)
-             }
-
-            val tutorId = dbw.update("TUTOR",  values, "STAZIONE_ENTRATA='$stazioneEntrata'", null)
-
-            values = ContentValues().apply {
-                put("LIMITE_VELOCITA", limiteVelocita)
-                put("TUTOR_FK", stazioneEntrata)
-            }
-
-            val autoveloxId = dbw.insert("AUTOVELOX", null, values)
-        }
-
         fun updateTutorModifyView(
             dbw: SQLiteDatabase,
             tutor: Tutor
@@ -296,6 +272,10 @@ class DBHelper(context: Context?) :
 
             val result = dbw.insert("AUTO",  null, values)
 
+            if(result.toInt() == -1)
+            {
+                throw Exception("Error while inserting camion")
+            }
         }
 
         fun insertMoto(dbw: SQLiteDatabase, username: String, moto: Moto)
@@ -311,6 +291,10 @@ class DBHelper(context: Context?) :
 
             val result = dbw.insert("MOTO",  null, values)
 
+            if(result.toInt() == -1)
+            {
+                throw Exception("Error while inserting camion")
+            }
         }
 
         fun insertCamion(dbw: SQLiteDatabase, username: String, camion: Camion)
@@ -327,6 +311,10 @@ class DBHelper(context: Context?) :
 
             val result = dbw.insert("CAMION",  null, values)
 
+            if(result.toInt() == -1)
+            {
+                throw Exception("Error while inserting camion")
+            }
         }
 
         fun deleteVehicleByFk(dbw: SQLiteDatabase, username: String?) {

@@ -2,6 +2,7 @@ package com.example.sicve.constants
 
 class ErrorConstants {
     companion object{
+        val NON_INT_VEL_MAX_FIELD = "Il campo velocita massima deve essere un intero"
         val ERROR_WHILE_SAVING_DATA: String = "Si è verificato un'errore durante il salvataggio dei dati"
         val PASSWORD_MUST_MATCH: String = "I campi password non sono uguali"
         val NO_AUTOVELOX_ADDED = "Aggiungi un autovelox al tutor"

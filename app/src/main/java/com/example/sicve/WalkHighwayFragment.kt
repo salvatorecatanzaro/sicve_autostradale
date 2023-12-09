@@ -77,7 +77,7 @@ class WalkHighwayFragment : Fragment() {
             }
             for(highWayBlock in highway?.highwayBlock.orEmpty())
             {
-                Utils.generateMessagesView(highWayBlock, view, targa, tipoVeicolo, velMassima, dbw, messaggiAttivi)
+                Utils.generateTransitView(highWayBlock, view, targa, tipoVeicolo, velMassima, dbw, messaggiAttivi)
             }
 
             val scrollView = view.findViewById<ScrollView>(R.id.transit_scroll_lay_id)

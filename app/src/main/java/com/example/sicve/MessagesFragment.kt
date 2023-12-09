@@ -54,7 +54,7 @@ class MessagesFragment : Fragment() {
 
         for(message in messages)
         {
-            Utils.generateMessagesView(message, view)
+            Utils.generateTransitView(message, view)
         }
         return view
     }

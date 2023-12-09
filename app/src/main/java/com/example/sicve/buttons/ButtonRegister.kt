@@ -1,15 +1,16 @@
-package com.example.sicve.utils
+package com.example.sicve.buttons
 
 import android.database.sqlite.SQLiteDatabase
 import android.view.View
 import android.widget.EditText
 import android.widget.Spinner
-import androidx.appcompat.app.AlertDialog
 import com.example.sicve.constants.AlertConstants
 import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.MessageDialog
 import com.example.sicve.entities.User
+import com.example.sicve.utils.DBHelper
+import com.example.sicve.utils.Validation
 
 class ButtonRegister: ButtonOperations {
     override fun saveOperation(

@@ -1,14 +1,17 @@
-package com.example.sicve.utils
+package com.example.sicve.buttons
 
-import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.widget.SwitchCompat
+import com.example.sicve.constants.AlertConstants
 import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.HighwayBlock
+import com.example.sicve.entities.MessageDialog
+import com.example.sicve.utils.DBHelper
+import com.example.sicve.utils.Validation
 
 class ButtonEditSave : ButtonOperations
 {
@@ -82,6 +85,8 @@ class ButtonEditSave : ButtonOperations
             )
             return  // On error do nothing
         }
+        val alert = MessageDialog(view.context, AlertConstants.SAVE_SUCCESS)
+        alert.showChoiceDialog()
     }
 
 }

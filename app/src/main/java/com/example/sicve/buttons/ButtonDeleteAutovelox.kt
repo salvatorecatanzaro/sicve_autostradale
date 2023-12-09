@@ -1,4 +1,4 @@
-package com.example.sicve.utils
+package com.example.sicve.buttons
 
 import android.database.sqlite.SQLiteDatabase
 import android.view.View

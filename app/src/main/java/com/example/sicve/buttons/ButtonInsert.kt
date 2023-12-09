@@ -1,4 +1,4 @@
-package com.example.sicve.utils
+package com.example.sicve.buttons
 
 import android.database.sqlite.SQLiteDatabase
 import android.view.View
@@ -8,6 +8,8 @@ import com.example.sicve.constants.AlertConstants
 import com.example.sicve.constants.ErrorConstants
 import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.MessageDialog
+import com.example.sicve.utils.DBHelper
+import com.example.sicve.utils.Validation
 
 class ButtonInsert: ButtonOperations {
     override fun saveOperation(view: View, formMap: MutableMap<String, Any?>, dbw: SQLiteDatabase) {
