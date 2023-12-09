@@ -36,6 +36,7 @@ class ButtonTransit {
                 ErrorConstants.ERROR_WHILE_SAVING_DATA,
                 view.context
             )
+            return
         }
 
         val validation = Validation()
@@ -45,6 +46,7 @@ class ButtonTransit {
                 ErrorConstants.ERROR_WHILE_SAVING_DATA,
                 view.context
             )
+            return
         }
 
         if(messaggiAttivi!!.isChecked)
@@ -55,6 +57,14 @@ class ButtonTransit {
         var velMedia = 0
         for(autovelox in tutor!!.listaAutovelox)
         {
+            if(80 > velMassima)
+            {
+                ErrorDialog(
+                    ErrorConstants.VEL_MAX_TOO_LOW,
+                    view.context
+                )
+                return
+            }
             val velCorrente = (80..velMassima!!).shuffled().last()
             velMedia +=  velCorrente
             if( velCorrente > autovelox.limiteVelocita) {
@@ -73,7 +83,7 @@ class ButtonTransit {
             }
             autovelox.computer.salvaInfrazioni(autovelox.computer.id, dbw)
         }
-        val alert = MessageDialog(view.context, AlertConstants.SAVE_SUCCESS)
+        val alert = MessageDialog(view.context, AlertConstants.TRANSIT_SUCCESS)
         alert.showChoiceDialog()
     }
 }

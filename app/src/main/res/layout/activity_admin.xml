@@ -31,10 +31,10 @@
                 app:title="toolbar placeholder"
                 app:titleTextColor="#ffff" />
 
-            <ImageView
+            <Button
                 android:id="@+id/logout_icon_id"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
                 android:layout_marginEnd="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/logout_text_id"
@@ -48,7 +48,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
-                android:text="logout"
                 android:textColor="#ffff"
                 android:textSize="18sp"
                 android:textStyle="bold"

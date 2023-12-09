@@ -1,9 +1,13 @@
 package com.example.sicve
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
+import android.widget.ImageView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import com.example.sicve.utils.Utils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class UserActivity : AppCompatActivity() {
@@ -11,13 +15,21 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user)
         getSupportActionBar()?.hide()
-        val intent = getIntent()
+        var intent = getIntent()
         val username = intent.getStringExtra("username")
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
         toolbar.setTitle("username: $username")
 
+        val logoutButton = findViewById<Button>(R.id.logout_icon_id)
+        logoutButton.setBackgroundResource(R.drawable.ic_logout)
+        Utils.buttonEffect(logoutButton)
+        logoutButton.setOnClickListener{
+            intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         val firstFragment = WalkHighwayFragment()
         val secondFragment = MessagesFragment()

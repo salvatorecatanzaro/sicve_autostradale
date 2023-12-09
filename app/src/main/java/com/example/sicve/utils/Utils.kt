@@ -3,6 +3,7 @@ package com.example.sicve.utils
 import android.annotation.SuppressLint
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
+import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.view.MotionEvent
@@ -11,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -178,8 +180,10 @@ class Utils {
             uscita.textSize = 20f
             val buttonTransitHighway = Button(view.context)
             buttonEffect(buttonTransitHighway)
+            buttonTransitHighway.layoutParams = getLayoutParams(20, 0 ,0, 0 , true, 0 ,0)
             buttonTransitHighway.text = "Percorri tratta"
             buttonTransitHighway.id = View.generateViewId()
+            buttonTransitHighway.setBackgroundColor(Color.parseColor("#24A0ED"))
             buttonTransitHighway.setOnClickListener{
                 val formMap = mutableMapOf(
                     "messaggi_attivi" to messaggiAttivi,
@@ -220,7 +224,7 @@ class Utils {
 
         }
 
-        fun generateTransitView(message: String, view: View)
+        fun generateMessageView(message: String, view: View)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.messages_linear_lay_id)
@@ -408,6 +412,7 @@ class Utils {
             buttonEffect(buttonSaveMyVehicle)
             buttonSaveMyVehicle.text = "Salva"
             buttonSaveMyVehicle.id = View.generateViewId()
+            buttonSaveMyVehicle.setBackgroundColor(Color.parseColor("#24A0ED"))
             buttonSaveMyVehicle.setOnClickListener{
                 val formMap = mutableMapOf<String, Any>(
                     "casa_automobilistica" to casaAutomobilisticaViewEdit,
@@ -570,7 +575,7 @@ class Utils {
         }
 
         @SuppressLint("ClickableViewAccessibility")
-        private fun buttonEffect(buttonSave: Button) {
+        fun buttonEffect(buttonSave: Button) {
             buttonSave.setOnTouchListener { v, event ->
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
@@ -585,7 +590,6 @@ class Utils {
                 false
             }
         }
-
     }
 
 }

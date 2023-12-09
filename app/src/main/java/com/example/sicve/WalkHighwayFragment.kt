@@ -8,7 +8,10 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
+import com.example.sicve.constants.ErrorConstants
+import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.HighWay
+import com.example.sicve.entities.MessageDialog
 import com.example.sicve.utils.DBHelper
 import com.example.sicve.utils.Utils
 
@@ -74,6 +77,15 @@ class WalkHighwayFragment : Fragment() {
                 }
                 cursor.close()
                 counter++
+            }
+            if(targa == "")
+            {
+                val md = MessageDialog(
+                    view.context,
+                    ErrorConstants.CREATE_VEHICLE_FIRST
+                )
+                md.showChoiceDialog()
+                return view
             }
             for(highWayBlock in highway?.highwayBlock.orEmpty())
             {
