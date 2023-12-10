@@ -46,7 +46,7 @@ class InformationsFragment : Fragment() {
         for(highwayBlock in highway!!.highwayBlock)
         {
             val tutor = highwayBlock!!.tutor
-            Utils.generateComputerView(tutor!!, view)
+            Utils.generateComputerView(tutor!!, view, dbw)
 
         }
 

@@ -351,6 +351,21 @@ class DBHelper(context: Context?) :
             }
         }
 
+        fun getNumeroMulte(id: Int, dbw: SQLiteDatabase): Int {
+            var nMulte = 0
+            val cursor = dbw.query("MULTE", null, "COMPUTER_FK=$id", null, null, null, null)
+            if(cursor.count != 0)
+            {
+                while(cursor.moveToNext())
+                {
+                    nMulte += 1
+                }
+            }
+
+            cursor.close()
+            return nMulte
+        }
+
 
         private const val DB_NAME = "sicve"
         private const val DB_VERSION = 1 //gestito dall’utente

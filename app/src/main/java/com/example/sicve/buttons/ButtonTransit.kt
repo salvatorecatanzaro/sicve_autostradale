@@ -49,6 +49,12 @@ class ButtonTransit {
             return
         }
 
+        if(!tutor.attivo)
+        {
+            val alert = MessageDialog(view.context, AlertConstants.TUTOR_INACTIVE)
+            alert.showChoiceDialog()
+            return
+        }
         if(messaggiAttivi!!.isChecked)
             DBHelper.insertMessage(targa!!, tipoVeicolo!!, tutor!!, dbw, "")
 

@@ -46,7 +46,7 @@ class WalkHighwayFragment : Fragment() {
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
             val linearLayout = LinearLayout(view.context)
             linearLayout.orientation = LinearLayout.VERTICAL
-            linearLayout.layoutParams = Utils.getLayoutParamsFillParentWidth(40, 20, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
+            linearLayout.layoutParams = Utils.getLayoutParamsFillParentWidth(40, 20, 20, 40, true, 0, 0, Gravity.NO_GRAVITY)
             val messaggiAttivi = SwitchCompat(view.context)
             messaggiAttivi.gravity = Gravity.END
             linearLayout.addView(messaggiAttivi)

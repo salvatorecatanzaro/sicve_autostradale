@@ -232,9 +232,9 @@ class Utils {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.messages_linear_lay_id)
             val linearLayout0 = LinearLayout(view.context)
-            val messageView = TextView(view.context)
-            messageView.setLayoutParams(ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT))
-            messageView.text = message
+            val messageView = createTextView(message, view.context)
+            messageView.layoutParams = getLayoutParamsWrap(50, 20, 50, 20, true, 0, 0, 0)
+            messageView.setBackgroundColor(Color.parseColor("#24A0ED"))
             linearLayout0.addView(messageView)
             linearLayoutContainer.addView(linearLayout0)
         }
@@ -322,16 +322,30 @@ class Utils {
             return (nomeStazioneEntrata.length - nomeStazioneUscita.length) * 20
         }
 
-        fun generateComputerView(tutor: Tutor, view: View)
+        fun generateComputerView(tutor: Tutor, view: View, dbw:SQLiteDatabase)
         {
 
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.info_linear_lay_id)
             for(autovelox in tutor.listaAutovelox) {
                 val linearLayout = LinearLayout(view.context)
+                val tutorView = createTextView("Tutor ${tutor.stazioneEntrata} - ", view.context)
+                tutorView.layoutParams = getLayoutParamsWrap(5, 10, 5, 0, true, 0, 0,0)
+                tutorView.setTypeface(null, Typeface.BOLD)
+                tutorView.textSize = 20f
                 val computerView = createTextView("Computer ${autovelox.computer.id}", view.context)
-                computerView.layoutParams = getLayoutParamsWrap(5, 5, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
+                computerView.setTypeface(null, Typeface.BOLD)
+                computerView.textSize = 20f
+                computerView.layoutParams = getLayoutParamsWrap(5, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
+                linearLayout.addView(tutorView)
                 linearLayout.addView(computerView)
+                val linearLayout1 = LinearLayout(view.context)
+                val numeroMulte: Int = DBHelper.getNumeroMulte(autovelox.computer.id, dbw)
+                val multeView = createTextView("Multe inviate: $numeroMulte", view.context)
+                multeView.layoutParams = getLayoutParamsWrap(5, 0, 5, 10, true, 0, 0,0)
+                linearLayout1.addView(multeView)
+
                 linearLayoutContainer.addView(linearLayout)
+                linearLayoutContainer.addView(linearLayout1)
             }
         }
 
@@ -349,7 +363,6 @@ class Utils {
                 layoutParams = LinearLayout.LayoutParams(width, height)
             layoutParams.setMargins(left, top, right, bottom)
 
-            layoutParams.gravity = alignment
             return layoutParams
         }
 
@@ -426,7 +439,7 @@ class Utils {
             val linearLayout2 = LinearLayout(view.context)
 
             val tipoVeicoloView = createTextView("Tipo veicolo", view.context)
-            tipoVeicoloView.layoutParams = getLayoutParamsWrap(20, 0, 0, 5, true, 0, 0, Gravity.NO_GRAVITY)
+            tipoVeicoloView.layoutParams = getLayoutParamsWrap(10, 10, 0, 5, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayout2.addView(tipoVeicoloView)
             linearLayout2.addView(spinner)
             linearLayoutContainer.addView(linearLayout2)
