@@ -1,6 +1,7 @@
 package com.example.sicve
 
 import android.os.Bundle
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,6 @@ import android.widget.ScrollView
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 import com.example.sicve.constants.ErrorConstants
-import com.example.sicve.entities.ErrorDialog
 import com.example.sicve.entities.HighWay
 import com.example.sicve.entities.MessageDialog
 import com.example.sicve.utils.DBHelper
@@ -45,8 +45,10 @@ class WalkHighwayFragment : Fragment() {
             // Building button needed to check whether the user wants to receive messges or not
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.transit_linear_lay_id)
             val linearLayout = LinearLayout(view.context)
-            linearLayout.layoutParams = Utils.getLayoutParams(40, 0, 20, 0, true, 0, 0)
+            linearLayout.orientation = LinearLayout.VERTICAL
+            linearLayout.layoutParams = Utils.getLayoutParamsFillParentWidth(40, 20, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val messaggiAttivi = SwitchCompat(view.context)
+            messaggiAttivi.gravity = Gravity.END
             linearLayout.addView(messaggiAttivi)
             messaggiAttivi.text = "Messaggi attivi?"
             linearLayoutContainer.addView(linearLayout)

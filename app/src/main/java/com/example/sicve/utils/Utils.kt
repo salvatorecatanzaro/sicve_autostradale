@@ -6,13 +6,13 @@ import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -47,19 +47,19 @@ class Utils {
 
             val linearLayout0 = LinearLayout(view.context)
             linearLayout0.orientation = LinearLayout.HORIZONTAL
-            linearLayout0.layoutParams = getLayoutParams(40, 100, 20, 0, true, 0, 0)
+            linearLayout0.layoutParams = getLayoutParamsWrap(40, 100, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayoutContainer.addView(linearLayout0)
             val linearLayout = LinearLayout(view.context)
             linearLayout.orientation = LinearLayout.HORIZONTAL
-            linearLayout.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
+            linearLayout.layoutParams = getLayoutParamsWrap(40, 0, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayoutContainer.addView(linearLayout)
             val linearLayout2 = LinearLayout(view.context)
             linearLayout2.orientation = LinearLayout.HORIZONTAL
-            linearLayout2.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
+            linearLayout2.layoutParams = getLayoutParamsWrap(40, 0, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayoutContainer.addView(linearLayout2)
             val linearLayout3 = LinearLayout(view.context)
             linearLayout3.orientation = LinearLayout.HORIZONTAL
-            linearLayout3.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
+            linearLayout3.layoutParams = getLayoutParamsWrap(40, 0, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayoutContainer.addView(linearLayout3)
             val autoveloxList = highWayBlock.tutor!!.listaAutovelox
 
@@ -88,7 +88,7 @@ class Utils {
                 val linearLayout4 = LinearLayout(view.context)
                 autoveloxLinearLayoutList.add(linearLayout4)
                 linearLayout4.orientation = LinearLayout.HORIZONTAL
-                linearLayout4.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
+                linearLayout4.layoutParams = getLayoutParamsWrap(40, 0, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
 
                 val limiteVelocitaTextView = createTextView("Limite autovelox ${autovelox.id}", view.context)
                 val limiteVelocitaEditTextView = createEditTextView(autovelox.limiteVelocita.toString(), true, view.context)
@@ -112,7 +112,7 @@ class Utils {
                         DBHelper.deleteAutoveloxById(dbw, autovelox.id)
                     }
                 }
-                buttonDeleteAutovelox.layoutParams = getLayoutParams(40, 0, 10, 0, false, 80, 80)
+                buttonDeleteAutovelox.layoutParams = getLayoutParamsWrap(40, 0, 10, 0, false, 80, 80, Gravity.NO_GRAVITY)
                 buttonDeleteAutovelox.setBackgroundResource(R.drawable.ic_delete)
                 buttonDeleteAutovelox.id = View.generateViewId()
 
@@ -124,7 +124,7 @@ class Utils {
 
             // Nome tutor
             val buttonSave = Button(view.context)
-            buttonSave.layoutParams = getLayoutParams(40, 0, 10, 0, false, 80, 80)
+            buttonSave.layoutParams = getLayoutParamsWrap(40, 0, 10, 0, false, 80, 80, Gravity.NO_GRAVITY)
             buttonSave.setBackgroundResource(R.drawable.ic_save)
             buttonSave.id = View.generateViewId()
             buttonEffect(buttonSave)
@@ -134,7 +134,7 @@ class Utils {
             }
 
             val buttonDelete = Button(view.context)
-            buttonDelete.layoutParams = getLayoutParams(40, 0, 10, 0, false, 80, 80)
+            buttonDelete.layoutParams = getLayoutParamsWrap(40, 0, 10, 0, false, 80, 80, Gravity.NO_GRAVITY)
             buttonEffect(buttonDelete)
             buttonDelete.setBackgroundResource(R.drawable.ic_delete)
             buttonDelete.id = View.generateViewId()
@@ -166,6 +166,8 @@ class Utils {
             val tutor: Tutor = highWayBlock!!.tutor!!
 
             val linearLayout0 = LinearLayout(view.context)
+            linearLayout0.orientation = LinearLayout.VERTICAL
+            linearLayout0.layoutParams = getLayoutParamsFillParentWidth(40, 0, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayoutContainer.addView(linearLayout0)
 
             val entrata = TextView(view.context)
@@ -178,9 +180,34 @@ class Utils {
             uscita.text = tutor.stazioneUscita
             uscita.setTypeface(null, Typeface.BOLD)
             uscita.textSize = 20f
+
+            linearLayout0.addView(entrata)
+            linearLayout0.addView(uscita)
+
+            var autoveloxCount = 0
+            for(autovelox in tutor.listaAutovelox) {
+                //val linearLayout4 = LinearLayout(view.context)
+                //linearLayout4.orientation = LinearLayout.HORIZONTAL
+                //linearLayout4.layoutParams = getLayoutParamsWrap(40, 0, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
+
+                autoveloxCount += 1
+                if(tutor.listaAutovelox.size == autoveloxCount) {
+                    val limiteVelocitaTextView = TextView(view.context)
+                    limiteVelocitaTextView.setLayoutParams(
+                        ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                    )
+                    limiteVelocitaTextView.text = "Numero Autovelox ${autoveloxCount}"
+                    limiteVelocitaTextView.textSize = 10f
+                    linearLayout0.addView(limiteVelocitaTextView)
+                }
+            }
+
             val buttonTransitHighway = Button(view.context)
             buttonEffect(buttonTransitHighway)
-            buttonTransitHighway.layoutParams = getLayoutParams(20, 0 ,0, 0 , true, 0 ,0)
+            buttonTransitHighway.layoutParams = getLayoutParamsFillParentWidth(20, 0 ,20, 20, false, 300 ,100, Gravity.END)
             buttonTransitHighway.text = "Percorri tratta"
             buttonTransitHighway.id = View.generateViewId()
             buttonTransitHighway.setBackgroundColor(Color.parseColor("#24A0ED"))
@@ -195,32 +222,8 @@ class Utils {
                 val buttonTransit = ButtonTransit()
                 buttonTransit.autoveloxChecks(formMap, dbw, view)
             }
-            linearLayout0.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
-            linearLayout0.addView(entrata)
-            linearLayout0.addView(uscita)
             linearLayout0.addView(buttonTransitHighway)
 
-            var autoveloxCount = 0
-            for(autovelox in tutor.listaAutovelox) {
-                val linearLayout4 = LinearLayout(view.context)
-                linearLayout4.orientation = LinearLayout.HORIZONTAL
-                linearLayout4.layoutParams = getLayoutParams(40, 0, 20, 0, true, 0, 0)
-
-                autoveloxCount += 1
-                if(tutor.listaAutovelox.size == autoveloxCount) {
-                    val limiteVelocitaTextView = TextView(view.context)
-                    limiteVelocitaTextView.setLayoutParams(
-                        ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.WRAP_CONTENT,
-                            ViewGroup.LayoutParams.WRAP_CONTENT
-                        )
-                    )
-                    limiteVelocitaTextView.text = "Numero Autovelox ${autoveloxCount}"
-                    limiteVelocitaTextView.textSize = 10f
-                    linearLayout4.addView(limiteVelocitaTextView)
-                }
-                linearLayoutContainer.addView(linearLayout4)
-            }
 
         }
 
@@ -247,9 +250,9 @@ class Utils {
 
             val linearLayout0 = LinearLayout(view.context)
             val tutorAttivoView = createSwitchCompat("Tutor attivo?", false, view.context)
-            tutorAttivoView.layoutParams = getLayoutParams(5, 30, 5, 0, true, 0, 0)
+            tutorAttivoView.layoutParams = getLayoutParamsWrap(5, 30, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val buttonSave = Button(view.context)
-            buttonSave.layoutParams = getLayoutParams(50, 30, 0, 0, false, 80, 80)
+            buttonSave.layoutParams = getLayoutParamsWrap(50, 30, 0, 0, false, 80, 80, Gravity.NO_GRAVITY)
             buttonSave.setBackgroundResource(R.drawable.ic_save)
             buttonEffect(buttonSave)
             buttonSave.setOnClickListener{
@@ -262,44 +265,44 @@ class Utils {
 
             val linearLayout1 = LinearLayout(view.context)
             val stazioneEntrataView = createTextView(NOME_STAZIONE_ENTRATA, view.context)
-            stazioneEntrataView.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+            stazioneEntrataView.layoutParams = getLayoutParamsWrap(5, 10, 0, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayout1.addView(stazioneEntrataView)
             val stazioneEntrataViewEdit = createEditTextView("", true, view.context)
-            stazioneEntrataViewEdit.layoutParams = getLayoutParams(50, 10, 0, 0, false, 500, 120)
+            stazioneEntrataViewEdit.layoutParams = getLayoutParamsWrap(50, 10, 0, 0, false, 500, 120, Gravity.NO_GRAVITY)
             insertTutorMap["stazione_entrata"] = stazioneEntrataViewEdit
             linearLayout1.addView(stazioneEntrataViewEdit)
 
             val linearLayout2 = LinearLayout(view.context)
             val stazioneUscitaView = createTextView(NOME_STAZIONE_USCITA, view.context)
-            stazioneUscitaView.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+            stazioneUscitaView.layoutParams = getLayoutParamsWrap(5, 10, 0, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayout2.addView(stazioneUscitaView)
             val stazioneUscitaViewEdit = createEditTextView("", true, view.context)
-            stazioneUscitaViewEdit.layoutParams = getLayoutParams(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, NOME_STAZIONE_USCITA), 10, 0, 0, false, 500, 120)
+            stazioneUscitaViewEdit.layoutParams = getLayoutParamsWrap(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, NOME_STAZIONE_USCITA), 10, 0, 0, false, 500, 120, Gravity.NO_GRAVITY)
             insertTutorMap["stazione_uscita"] = stazioneUscitaViewEdit
             linearLayout2.addView(stazioneUscitaViewEdit)
 
             val linearLayout3 = LinearLayout(view.context)
             val aggiungiAutovelox = createTextView(AGGIUNGI_AUTOVELOX, view.context)
-            aggiungiAutovelox.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+            aggiungiAutovelox.layoutParams = getLayoutParamsWrap(5, 10, 0, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayout3.addView(aggiungiAutovelox)
             val buttonAggiungiAutovelox = Button(view.context)
             buttonEffect(buttonAggiungiAutovelox)
-            buttonAggiungiAutovelox.layoutParams = getLayoutParams(50, 10, 0, 0, false, 80, 80)
+            buttonAggiungiAutovelox.layoutParams = getLayoutParamsWrap(50, 10, 0, 0, false, 80, 80, Gravity.NO_GRAVITY)
             buttonAggiungiAutovelox.setBackgroundResource(R.drawable.ic_add)
             linearLayout3.addView(buttonAggiungiAutovelox)
             buttonAggiungiAutovelox.setOnClickListener{
                 val linearLayout4 = LinearLayout(view.context)
                 val autoveloxTextView = createTextView(LIMITE_VELOCITA_AUTOVELOX, view.context)
-                autoveloxTextView.layoutParams = getLayoutParams(5, 10, 0, 0, true, 0, 0)
+                autoveloxTextView.layoutParams = getLayoutParamsWrap(5, 10, 0, 0, true, 0, 0, Gravity.NO_GRAVITY)
                 linearLayout4.addView(autoveloxTextView)
                 val autoveloxEditTextView = createEditTextView("", true, view.context)
-                autoveloxEditTextView.layoutParams = getLayoutParams(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, LIMITE_VELOCITA_AUTOVELOX), 10, 0, 0, false, 500, 120)
+                autoveloxEditTextView.layoutParams = getLayoutParamsWrap(50 + getMarginLeftBasedOnFirstString(NOME_STAZIONE_ENTRATA, LIMITE_VELOCITA_AUTOVELOX), 10, 0, 0, false, 500, 120, Gravity.NO_GRAVITY)
                 autoveloxEditTextView.transformationMethod = null
                 (insertTutorMap["limite_autovelox"] as MutableList<EditText>).add(autoveloxEditTextView)
                 linearLayout4.addView(autoveloxEditTextView)
                 val buttonRimuoviAutovelox = Button(view.context)
                 buttonEffect(buttonRimuoviAutovelox)
-                buttonRimuoviAutovelox.layoutParams = getLayoutParams(50, 10, 0, 0, false, 80, 80)
+                buttonRimuoviAutovelox.layoutParams = getLayoutParamsWrap(50, 10, 0, 0, false, 80, 80, Gravity.NO_GRAVITY)
                 buttonRimuoviAutovelox.setBackgroundResource(R.drawable.ic_delete)
                 buttonRimuoviAutovelox.setOnClickListener{
                     linearLayoutContainer.removeView(linearLayout4)
@@ -326,13 +329,13 @@ class Utils {
             for(autovelox in tutor.listaAutovelox) {
                 val linearLayout = LinearLayout(view.context)
                 val computerView = createTextView("Computer ${autovelox.computer.id}", view.context)
-                computerView.layoutParams = getLayoutParams(5, 5, 5, 0, true, 0, 0)
+                computerView.layoutParams = getLayoutParamsWrap(5, 5, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
                 linearLayout.addView(computerView)
                 linearLayoutContainer.addView(linearLayout)
             }
         }
 
-        fun getLayoutParams(left: Int, top: Int, right: Int, bottom: Int, wrap: Boolean, width: Int, height: Int) : LinearLayout.LayoutParams{
+        fun getLayoutParamsWrap(left: Int, top: Int, right: Int, bottom: Int, wrap: Boolean, width: Int, height: Int, alignment: Int) : LinearLayout.LayoutParams{
             /**
              *  Used to create Layout parameters
              */
@@ -345,8 +348,29 @@ class Utils {
             if(!wrap)
                 layoutParams = LinearLayout.LayoutParams(width, height)
             layoutParams.setMargins(left, top, right, bottom)
+
+            layoutParams.gravity = alignment
             return layoutParams
         }
+
+        fun getLayoutParamsFillParentWidth(left: Int, top: Int, right: Int, bottom: Int, fillParent: Boolean, width: Int, height: Int, alignment: Int) : LinearLayout.LayoutParams{
+            /**
+             *  Used to create Layout parameters
+             */
+
+            var layoutParams =
+                LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                )
+            if(!fillParent)
+                layoutParams = LinearLayout.LayoutParams(width, height)
+            layoutParams.setMargins(left, top, right, bottom)
+            layoutParams.gravity = alignment
+
+            return layoutParams
+        }
+
 
         fun generateMyCarForm(dbw: SQLiteDatabase?, view: View?, username: String?) {
 
@@ -369,27 +393,27 @@ class Utils {
 
             var linearLayout = LinearLayout(view.context)
             val targaTextView = createTextView("Targa", view.context)
-            targaTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            targaTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val targaEditTextView = createEditTextView(tmpValuesMap["targa"]!!, true, view.context)
-            targaEditTextView.layoutParams = getLayoutParams(255, 10, 5, 0, false, 400, 120)
+            targaEditTextView.layoutParams = getLayoutParamsWrap(255, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             linearLayout.addView(targaTextView)
             linearLayout.addView(targaEditTextView)
             linearLayoutContainer.addView(linearLayout)
 
             var linearLayout3 = LinearLayout(view.context)
             val velocitaMassimaView = createTextView("Velocita massima", view.context)
-            velocitaMassimaView.layoutParams = getLayoutParams(20, 10, 0, 0, true, 0, 0)
+            velocitaMassimaView.layoutParams = getLayoutParamsWrap(20, 10, 0, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val velocitaMassimaEditText = createEditTextView(tmpValuesMap["velocita_massima"]!!, true, view.context)
-            velocitaMassimaEditText.layoutParams = getLayoutParams(50, 10, 0, 0, false, 400, 120)
+            velocitaMassimaEditText.layoutParams = getLayoutParamsWrap(50, 10, 0, 0, false, 400, 120, Gravity.NO_GRAVITY)
             linearLayout3.addView(velocitaMassimaView)
             linearLayout3.addView(velocitaMassimaEditText)
             linearLayoutContainer.addView(linearLayout3)
 
             var linearLayout1 = LinearLayout(view.context)
             val casaAutomobilisticaView = createTextView("Casa automobilistica", view.context)
-            casaAutomobilisticaView.layoutParams = getLayoutParams(20, 10, 0, 0, true, 0, 0)
+            casaAutomobilisticaView.layoutParams = getLayoutParamsWrap(20, 10, 0, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val casaAutomobilisticaViewEdit = createEditTextView(tmpValuesMap["casa_automobilistica"]!!, true, view.context)
-            casaAutomobilisticaViewEdit.layoutParams = getLayoutParams(0, 10, 0, 0, false, 400, 120)
+            casaAutomobilisticaViewEdit.layoutParams = getLayoutParamsWrap(0, 10, 0, 0, false, 400, 120, Gravity.NO_GRAVITY)
             linearLayout1.addView(casaAutomobilisticaView)
             linearLayout1.addView(casaAutomobilisticaViewEdit)
             linearLayoutContainer.addView(linearLayout1)
@@ -402,7 +426,7 @@ class Utils {
             val linearLayout2 = LinearLayout(view.context)
 
             val tipoVeicoloView = createTextView("Tipo veicolo", view.context)
-            tipoVeicoloView.layoutParams = getLayoutParams(20, 0, 0, 5, true, 0, 0)
+            tipoVeicoloView.layoutParams = getLayoutParamsWrap(20, 0, 0, 5, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayout2.addView(tipoVeicoloView)
             linearLayout2.addView(spinner)
             linearLayoutContainer.addView(linearLayout2)
@@ -423,7 +447,7 @@ class Utils {
                 val buttonSave = ButtonSaveMyVehicle()
                 buttonSave.saveMyVehicle(formMap, dbw, username!!, view)
             }
-            linearLayout5.layoutParams = getLayoutParams(40, 100, 20, 0, true, 0, 0)
+            linearLayout5.layoutParams = getLayoutParamsWrap(40, 100, 20, 0, true, 0, 0, Gravity.NO_GRAVITY)
             linearLayout5.addView(buttonSaveMyVehicle)
             linearLayoutContainer.addView(linearLayout5)
         }
@@ -478,9 +502,9 @@ class Utils {
             val linearLayoutContainer = view.findViewById<LinearLayout>(R.id.linear_lay_id_register)
             val linearLayout = LinearLayout(view.context)
             val usernameTextView = createTextView("Username", view.context)
-            usernameTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            usernameTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val usernameEditTextView = createEditTextView("", true, view.context)
-            usernameEditTextView.layoutParams = getLayoutParams(100, 10, 5, 0, false, 400, 120)
+            usernameEditTextView.layoutParams = getLayoutParamsWrap(100, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             formMap["username"] = usernameEditTextView
             linearLayout.addView(usernameTextView)
             linearLayout.addView(usernameEditTextView)
@@ -488,9 +512,9 @@ class Utils {
 
             val linearLayout1 = LinearLayout(view.context)
             val nomeTextView = createTextView("Nome", view.context)
-            nomeTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            nomeTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val nomeEditTextView = createEditTextView("", true, view.context)
-            nomeEditTextView.layoutParams = getLayoutParams(170, 10, 5, 0, false, 400, 120)
+            nomeEditTextView.layoutParams = getLayoutParamsWrap(170, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             formMap["nome"] = nomeEditTextView
             linearLayout1.addView(nomeTextView)
             linearLayout1.addView(nomeEditTextView)
@@ -498,9 +522,9 @@ class Utils {
 
             val linearLayout2 = LinearLayout(view.context)
             val cognomeTextView = createTextView("Cognome", view.context)
-            cognomeTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            cognomeTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val cognomeEditTextView = createEditTextView("", true, view.context)
-            cognomeEditTextView.layoutParams = getLayoutParams(110, 10, 5, 0, false, 400, 120)
+            cognomeEditTextView.layoutParams = getLayoutParamsWrap(110, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             formMap["cognome"] = cognomeEditTextView
             linearLayout2.addView(cognomeTextView)
             linearLayout2.addView(cognomeEditTextView)
@@ -508,9 +532,9 @@ class Utils {
 
             val linearLayout3 = LinearLayout(view.context)
             val passwordTextView = createTextView("Password", view.context)
-            passwordTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            passwordTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val passwordEditTextView = createEditTextView("", true, view.context)
-            passwordEditTextView.layoutParams = getLayoutParams(110, 10, 5, 0, false, 400, 120)
+            passwordEditTextView.layoutParams = getLayoutParamsWrap(110, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             formMap["password"] = passwordEditTextView
             linearLayout3.addView(passwordTextView)
             linearLayout3.addView(passwordEditTextView)
@@ -518,9 +542,9 @@ class Utils {
 
             val linearLayout4 = LinearLayout(view.context)
             val repeatPasswordTextView = createTextView("Ripeti Password", view.context)
-            repeatPasswordTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            repeatPasswordTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val repeatPasswordEditTextView = createEditTextView("", true, view.context)
-            repeatPasswordEditTextView.layoutParams = getLayoutParams(5, 10, 5, 0, false, 400, 120)
+            repeatPasswordEditTextView.layoutParams = getLayoutParamsWrap(5, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             formMap["repeat_password"] = repeatPasswordEditTextView
             linearLayout4.addView(repeatPasswordTextView)
             linearLayout4.addView(repeatPasswordEditTextView)
@@ -528,7 +552,7 @@ class Utils {
 
             val linearLayout5 = LinearLayout(view.context)
             val ruoloTextView = createTextView("Ruolo", view.context)
-            ruoloTextView.layoutParams = getLayoutParams(20, 10, 5, 0, true, 0, 0)
+            ruoloTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val spinner = Spinner(view.context)
             val spinnerData = arrayOf("ADMIN", "UTENTE")
             spinner.adapter = ArrayAdapter(view.context, android.R.layout.simple_spinner_dropdown_item, spinnerData)
@@ -540,7 +564,7 @@ class Utils {
             val linearLayout6 = LinearLayout(view.context)
             val buttonSave = Button(view.context)
             buttonEffect(buttonSave)
-            buttonSave.layoutParams = getLayoutParams(40, 0, 10, 0, true, 80, 80)
+            buttonSave.layoutParams = getLayoutParamsWrap(40, 0, 10, 0, true, 80, 80, Gravity.NO_GRAVITY)
             buttonSave.text = "Save"
             buttonSave.id = View.generateViewId()
             buttonSave.setOnClickListener{

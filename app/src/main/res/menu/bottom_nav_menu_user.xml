@@ -3,16 +3,16 @@
     <item
         android:id="@+id/transit_hw_block"
         android:title="Percorri tratta"
-        android:icon="@drawable/ic_add"
+        android:icon="@drawable/ic_moving"
         android:color="#24A0ED"/>
     <item
         android:id="@+id/messages"
         android:title="Messaggi"
-        android:icon="@drawable/ic_edit"
+        android:icon="@drawable/ic_message"
         android:color="#24A0ED"/>
     <item
         android:id="@+id/my_vehicle"
         android:title="La mia auto"
-        android:icon="@drawable/ic_info"
+        android:icon="@drawable/ic_my_car"
         android:color="#24A0ED"/>
 </menu>

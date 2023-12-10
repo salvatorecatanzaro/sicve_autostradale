@@ -21,7 +21,7 @@ class AdminActivity : AppCompatActivity() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
 
-        toolbar.setTitle("username: $username")
+        toolbar.setTitle(username)
 
         val logoutButton = findViewById<Button>(R.id.logout_icon_id)
         logoutButton.setBackgroundResource(R.drawable.ic_logout)

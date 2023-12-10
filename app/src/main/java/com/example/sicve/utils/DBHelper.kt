@@ -221,9 +221,10 @@ class DBHelper(context: Context?) :
                     dbw.endTransaction()
                     throw Exception("Error while saving data")
                 }
-                dbw.setTransactionSuccessful()
-                dbw.endTransaction()
+
             }
+            dbw.setTransactionSuccessful()
+            dbw.endTransaction()
         }
 
         fun deleteAutoveloxById(dbw: SQLiteDatabase, id: Int) {
