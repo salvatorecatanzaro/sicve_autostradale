@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.text.InputType
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
@@ -548,6 +549,7 @@ class Utils {
             passwordTextView.layoutParams = getLayoutParamsWrap(20, 10, 5, 0, true, 0, 0, Gravity.NO_GRAVITY)
             val passwordEditTextView = createEditTextView("", true, view.context)
             passwordEditTextView.layoutParams = getLayoutParamsWrap(110, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
+            passwordEditTextView.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
             formMap["password"] = passwordEditTextView
             linearLayout3.addView(passwordTextView)
             linearLayout3.addView(passwordEditTextView)
@@ -559,6 +561,7 @@ class Utils {
             val repeatPasswordEditTextView = createEditTextView("", true, view.context)
             repeatPasswordEditTextView.layoutParams = getLayoutParamsWrap(5, 10, 5, 0, false, 400, 120, Gravity.NO_GRAVITY)
             formMap["repeat_password"] = repeatPasswordEditTextView
+            repeatPasswordEditTextView.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD or InputType.TYPE_CLASS_TEXT
             linearLayout4.addView(repeatPasswordTextView)
             linearLayout4.addView(repeatPasswordEditTextView)
             linearLayoutContainer.addView(linearLayout4)
