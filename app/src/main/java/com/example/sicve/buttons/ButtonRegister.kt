@@ -53,6 +53,7 @@ class ButtonRegister: ButtonOperations {
                 ErrorConstants.ERROR_WHILE_SAVING_DATA,
                 view.context
             )
+            return
         }
         val alert = MessageDialog(view.context, AlertConstants.SAVE_SUCCESS)
         alert.showChoiceDialog()

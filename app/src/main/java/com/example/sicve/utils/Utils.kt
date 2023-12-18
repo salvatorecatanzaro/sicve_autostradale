@@ -583,6 +583,7 @@ class Utils {
             buttonSave.layoutParams = getLayoutParamsWrap(40, 0, 10, 0, true, 80, 80, Gravity.NO_GRAVITY)
             buttonSave.text = "Save"
             buttonSave.id = View.generateViewId()
+            buttonSave.setBackgroundColor(Color.parseColor("#24A0ED"))
             buttonSave.setOnClickListener{
                 val buttonRegister = ButtonRegister()
                 buttonRegister.saveOperation(view, formMap, dbw)
