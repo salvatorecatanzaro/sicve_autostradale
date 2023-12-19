@@ -27,7 +27,7 @@ class ButtonInsert: ButtonOperations {
 
         }
         val autoveloxList = formMap["limite_autovelox"] as MutableList<EditText>
-        if(autoveloxList.size == 0)
+        if(autoveloxList.size < 2)
         {
             ErrorDialog(
                 ErrorConstants.NO_AUTOVELOX_ADDED,

@@ -97,7 +97,7 @@ class Utils {
                 buttonEffect(buttonDeleteAutovelox)
                 currentTutorMap[autovelox.id.toString()] = limiteVelocitaEditTextView
                 buttonDeleteAutovelox.setOnClickListener{
-                    if(autoveloxLinearLayoutList.size == 1)
+                    if(autoveloxLinearLayoutList.size == 1 || autoveloxLinearLayoutList.size == 2)
                     {
                         DBHelper.deleteHighwayBlockModifyView(dbw, highWayBlock)
                         linearLayoutContainer.removeView(linearLayout0)
@@ -307,6 +307,7 @@ class Utils {
                 buttonRimuoviAutovelox.setBackgroundResource(R.drawable.ic_delete)
                 buttonRimuoviAutovelox.setOnClickListener{
                     linearLayoutContainer.removeView(linearLayout4)
+                    (insertTutorMap["limite_autovelox"] as MutableList<EditText>).remove(autoveloxEditTextView)
                 }
                 linearLayout4.addView(buttonRimuoviAutovelox)
                 linearLayoutContainer.addView(linearLayout4)

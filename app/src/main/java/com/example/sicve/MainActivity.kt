@@ -13,6 +13,9 @@ import com.example.sicve.login.UserAuthentication
 import com.example.sicve.utils.DBHelper
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        var initDbCount = 1
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -24,8 +27,9 @@ class MainActivity : AppCompatActivity() {
         val buttonSubmit = findViewById<Button>(R.id.button_submit)
         val db = DBHelper(this)
         val initDb : String = getString(R.string.db_delete)
-        if(initDb == "yes") {
+        if(initDb == "yes" && initDbCount == 1) {
             this.deleteDatabase("sicve")
+            initDbCount = 0
         }
         val dbw = db.writableDatabase
         buttonRegiter.setOnClickListener {
